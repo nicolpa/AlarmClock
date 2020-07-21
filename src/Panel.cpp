@@ -24,7 +24,6 @@ void Panel::draw()
 {
     if(!visible) return;
 
-    Container::draw();
 
     LCD->setColor(background);
     LCD->fillRect(getX(), getY(), getX() + width, getY() + height);
@@ -50,6 +49,8 @@ void Panel::draw()
 
     LCD->setColor(VGA_RED);
     LCD->drawHLine(centerX - 5, centerY, 10);
+    
+    Container::draw();
 }
 
 void Panel::setBorder(bool top, bool bottom, bool left, bool right)
