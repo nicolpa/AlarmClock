@@ -60,15 +60,17 @@ public:
 
     /**
      * Get the x coordinate of the upper left corner
+     * @param useScreenSpace Set to true to get the x value in the absolue, false otherwise
      * @return The current x coordinate
      */
-    uint16_t getX();
+    uint16_t getX(bool useScreenSpace = true);
 
     /**
      * Get the y coordinate of the upper left corner
+     * * @param useScreenSpace Set to true to get the y value in the absolue, false otherwise
      * @return The current y coordinate
      */
-    uint16_t getY();
+    uint16_t getY(bool useScreenSpace = true);
 
     /**
      * Get the width of the component

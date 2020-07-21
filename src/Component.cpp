@@ -47,14 +47,14 @@ Container* Component::getParent()
     return parent;
 }
 
-uint16_t Component::getX() 
+uint16_t Component::getX(bool useScreenSpace) 
 {
-    return x;
+    return (parent != nullptr && useScreenSpace) ? x + parent->getX() : x;
 }
 
-uint16_t Component::getY() 
+uint16_t Component::getY(bool useScreenSpace) 
 {
-    return y;
+    return (parent != nullptr && useScreenSpace) ? x + parent->getX() : x;
 }
 
 uint16_t Component::getWidth() 
