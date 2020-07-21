@@ -67,7 +67,7 @@ uint16_t Component::getHeight()
     return height;
 }
 
-uint16_t* Component::getFont() 
+uint8_t* Component::getFont() 
 {
     return font;
 }
@@ -132,7 +132,7 @@ void Component::setBounds(uint16_t x, uint16_t y, uint16_t width, uint16_t heigh
     this->height = height;
 }
 
-void Component::setFont(uint16_t *font) 
+void Component::setFont(uint8_t *font) 
 {
     this->font = font;
 }

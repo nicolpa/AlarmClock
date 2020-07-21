@@ -88,7 +88,7 @@ public:
      * Return the font in use for this component
      * @return The font for this component
      */
-    uint16_t *getFont();
+    uint8_t *getFont();
 
     /**
      * Set the parent of the component
@@ -167,7 +167,7 @@ public:
      * Set the font for this component
      * @param font The new font for this component
      */
-    void setFont(uint16_t *font);
+    void setFont(uint8_t *font);
 
 protected:
     lcd::UTFT *LCD;
@@ -234,7 +234,7 @@ protected:
      * The default font used in the component
      * This may be null
      */
-    uint16_t *font = nullptr;
+    uint8_t *font = nullptr;
 
 
     /**
