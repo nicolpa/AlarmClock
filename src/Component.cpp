@@ -54,7 +54,7 @@ uint16_t Component::getX(bool useScreenSpace)
 
 uint16_t Component::getY(bool useScreenSpace) 
 {
-    return (parent != nullptr && useScreenSpace) ? x + parent->getX() : x;
+    return (parent != nullptr && useScreenSpace) ? y + parent->getY() : y;
 }
 
 uint16_t Component::getWidth() 
