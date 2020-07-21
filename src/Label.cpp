@@ -14,7 +14,6 @@ Label::~Label() {}
 
 void Label::draw()
 {
-    Serial.println((font == nullptr) ? "euhm..." : "Okay");
     LCD->setFont(font);
     LCD->setColor(foreground);
     LCD->setBackColor(background);
