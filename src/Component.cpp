@@ -1,4 +1,5 @@
 #include "Component.hpp"
+#include "Container.hpp"
 
 
 Component::Component(lcd::UTFT *LCD, uint16_t x, uint16_t y, uint16_t width, uint16_t height,
@@ -17,7 +18,8 @@ Component::Component(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uin
 
 Component::~Component() 
 {
-    
+    if(parent != nullptr)
+        delete parent;
 }
 
 bool Component::onClick(uint16_t x, uint16_t y) 
@@ -38,6 +40,11 @@ bool Component::isClickable()
 bool Component::isEnable() 
 {
     return enable;
+}
+
+Container* Component::getParent() 
+{
+    return parent;
 }
 
 uint16_t Component::getX() 
@@ -63,6 +70,11 @@ uint16_t Component::getHeight()
 uint16_t* Component::getFont() 
 {
     return font;
+}
+
+void Component::setParent(Container *parent) 
+{
+    this->parent = parent;
 }
 
 void Component::setVisible(bool visible) 

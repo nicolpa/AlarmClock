@@ -7,6 +7,8 @@
 
 extern uint16_t SmallFont[], BigFont[], SevenSegNumFontPlus[];
 
+class Container;
+
 class Component
 {
 
@@ -51,6 +53,12 @@ public:
     bool isEnable();
 
     /**
+     * Return the parent of this component
+     * @return The parent of this container
+     */
+    Container *getParent();
+
+    /**
      * Get the x coordinate of the upper left corner
      * @return The current x coordinate
      */
@@ -79,6 +87,12 @@ public:
      * @return The font for this component
      */
     uint16_t *getFont();
+
+    /**
+     * Set the parent of the component
+     * @param parent The new parent of the component
+     */
+    void setParent(Container *parent);
 
     /**
      * Set the component visibility
@@ -156,6 +170,8 @@ public:
 protected:
     lcd::UTFT *LCD;
     URTouch *Touch = nullptr;
+
+    Container *parent = nullptr;
     
     /**
      * True is the object is visible (although it is only showing if all ancestors are likewise visible)
