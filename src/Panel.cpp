@@ -23,59 +23,33 @@ bool Panel::onClick(uint16_t x, uint16_t y)
 void Panel::draw()
 {
     if(!visible) return;
-    // String msg = "(" + String(getPosX()) + ", " + String(getPosY()) + ")";
-    // Serial.println(msg);
 
     Container::draw();
 
-    LCD->setColor(foreground);
+    LCD->setColor(background);
+    LCD->fillRect(getX(), getY(), getX() + width, getY() + height);
+    
     int centerX;
     int centerY;
 
-    if (parent != nullptr)
-    {
-        // LCD->drawRect(getPosX() + parent->getPosX(), getPosX() + parent->getPosY(), getPosX() + parent->getPosX() + getWidth(), getPosX() + parent->getPosY() + getHeight());
-        LCD->setColor(background);
-        // LCD->drawRect(getPosX() + parent->getPosX(), getPosX() + parent->getPosY(), getPosX() + parent->getPosX() + getWidth(), getPosX() + parent->getPosY() + getHeight());
-        // LCD->drawRect(getPosX() + parent->getPosX() + paddingLeft, getPosX() + parent->getPosY() + paddingTop, getPosX() + parent->getPosX() + getWidth() - paddingRight, getPosX() + parent->getPosY() + getHeight() - paddingBottom);
-        LCD->setColor(borderColor);
-        if (borderTop)
-            LCD->drawHLine(getX() + parent->getX(), getY() + parent->getY(), getWidth());
-        if (borderBottom)
-            LCD->drawHLine(getX() + parent->getX(), getY() + getHeight() + parent->getY(), getWidth());
-        if (borderLeft)
-            LCD->drawVLine(getX() + parent->getX(), getY() + parent->getY(), getHeight());
-        if (borderRight)
-            LCD->drawVLine(getX() + getWidth() + parent->getX(), getY() + parent->getY(), getHeight());
+    LCD->setColor(borderColor);
+    if (borderTop)
+        LCD->drawHLine(getX(), getY(), getWidth());
+    if (borderBottom)
+        LCD->drawHLine(getX(), getY() + getHeight(), getWidth());
+    if (borderLeft)
+        LCD->drawVLine(getX(), getY(), getHeight());
+    if (borderRight)
+        LCD->drawVLine(getX() + getWidth(), getY(), getHeight());
 
-        centerX = getX() + parent->getX() + (getWidth() / 2);
-        centerY = getY() + parent->getY() + (getHeight() / 2);
-    }
-    else
-    {
-        // LCD->drawRect(getPosX(), getPosX(), getPosX() + getWidth(), getPosX() + getHeight());
-        LCD->setColor(background);
-        // LCD->drawRect(getPosX(), getPosX(), getPosX() + getWidth(), getPosX() + getHeight());
-        // LCD->drawRect(getPosX() + paddingLeft, getPosX() + paddingTop, getPosX() + getWidth() - paddingRight, getPosX() + getHeight() - paddingBottom);
-        LCD->setColor(borderColor);
-        if (borderTop)
-            LCD->drawHLine(getX(), getY(), getWidth());
-        if (borderBottom)
-            LCD->drawHLine(getX(), getY() + getHeight(), getWidth());
-        if (borderLeft)
-            LCD->drawVLine(getX(), getY(), getHeight());
-        if (borderRight)
-            LCD->drawVLine(getX() + getWidth(), getY(), getHeight());
+    centerX = getX() + (getWidth() / 2);
+    centerY = getY() + (getHeight() / 2);
 
-        centerX = getX() + (getWidth() / 2);
-        centerY = getY() + (getHeight() / 2);
-    }
+    LCD->setColor(VGA_GREEN);
+    LCD->drawVLine(centerX, centerY - 5, 10);
 
-    // LCD->setColor(VGA_GREEN);
-    // LCD->drawVLine(centerX, centerY - 5, 10);
-
-    // LCD->setColor(VGA_RED);
-    // LCD->drawHLine(centerX - 5, centerY, 10);
+    LCD->setColor(VGA_RED);
+    LCD->drawHLine(centerX - 5, centerY, 10);
 }
 
 void Panel::setBorder(bool top, bool bottom, bool left, bool right)
