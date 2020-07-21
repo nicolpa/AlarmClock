@@ -136,3 +136,8 @@ void Component::setFont(uint8_t *font)
 {
     this->font = font;
 }
+
+bool Component::contains(uint16_t x, uint16_t y) 
+{
+    return x >= getX() && y >= getY() && x < (getX() + width) && y < (getY() + height);
+}
