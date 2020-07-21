@@ -5,7 +5,7 @@
 
 #define LONG_PRESS_TIME 750 //in millisecond
 
-extern uint16_t SmallFont[], BigFont[], SevenSegNumFontPlus[];
+extern uint8_t SmallFont[], BigFont[], SevenSegNumFontPlus[];
 
 class Container;
 
