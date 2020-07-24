@@ -241,7 +241,8 @@ protected:
      * Test whether or not the specified point is contained within this component.
      * @param x The x coordinate of the point to test in screen coordinates
      * @param y The y coordinate of the poinr to test in screen coordinates
+     * @param hitboxOffset Increase the size of hitbox of the component by the specified value
      * @return true if the point is within this component
      */
-    bool contains(uint16_t x, uint16_t y);
+    bool contains(uint16_t x, uint16_t y, uint16_t hitboxOffset = 0);
 };

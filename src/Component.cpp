@@ -137,7 +137,7 @@ void Component::setFont(uint8_t *font)
     this->font = font;
 }
 
-bool Component::contains(uint16_t x, uint16_t y) 
+bool Component::contains(uint16_t x, uint16_t y, uint16_t hitboxOffset = 0) 
 {
-    return x >= getX() && y >= getY() && x < (getX() + width) && y < (getY() + height);
+    return x >= (getX() - hitboxOffset) && y >= (getY() - hitboxOffset) && x < (getX() + width + hitboxOffset) && y < (getY() + height + hitboxOffset);
 }
