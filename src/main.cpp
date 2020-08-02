@@ -64,8 +64,6 @@ void setup()
     pnlUpLeft->add(slrHorizontal);
     pnlBottomRight->add(slrVertical);
 
-    Serial.println("Draw");
-
     pnlUpRight->draw();
     pnlBottomLeft->draw();
     pnlBottomRight->draw();

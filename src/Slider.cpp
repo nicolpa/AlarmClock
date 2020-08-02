@@ -19,14 +19,14 @@ Slider::Slider(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t 
 
 Slider::~Slider()
 {
+    if(ticksValues != nullptr)
+        delete  [] ticksValues;
     // if (picker != nullptr)
     //     delete picker;
 }
 
 void Slider::draw()
 {
-    Serial.println("hello ?!." + String(value));
-    // delay(1000);
     if(orientation == Orientation::HORIZONTAL)
     {
         int screenSpaceValue = map(value, minimum, maximum, getX(), getX() + width);
@@ -44,21 +44,14 @@ void Slider::draw()
         if(showTicks)
         {
             if(ticksValues == nullptr)
-            {
-                Serial.println("nullptr");
                 for(int i = minimum; i <= maximum; i++)
                     LCD->drawVLine(map(i, minimum, maximum, getX(), getX() + width), getY() - 1, height + 2);
-            }
             else
-            {
-                Serial.println("!= nullptr1");
                 for(int i = 0; i < nTicks; i++)
                     LCD->drawVLine(map(ticksValues[i], minimum, maximum, getX(), getX() + width), getY() - 1, height + 2);
-            }
         }
 
         LCD->fillRect(screenSpaceValue - 2, getY() - 2, screenSpaceValue + 2, getY() + height + 4);
-        // LCD->drawVLine(screenSpaceValue, getY() - 2, height + 4);
     }
     else
     {
@@ -77,21 +70,14 @@ void Slider::draw()
         if(showTicks)
         {
             if(ticksValues == nullptr)
-            {
-                Serial.println("nullptr2");
                 for(int i = minimum; i <= maximum; i++)
                     LCD->drawHLine(getX() - 1, map(i, minimum, maximum, getY(), getY() + height), width + 2);
-            }
             else
-            {
-                Serial.println("!= nullptr2");
                 for(int i = 0; i < nTicks; i++)
                     LCD->drawHLine(getX() - 1, map(ticksValues[i], minimum, maximum, getY(), getY() + height), width + 2);
-            }
         }
 
         LCD->fillRect(getX() - 2, screenSpaceValue - 2, getX() + width + 2, screenSpaceValue + 2);
-        // LCD->drawHLine(getX() - 2, screenSpaceValue, width + 4);
     }
 }
 
@@ -100,7 +86,6 @@ bool Slider::onClick(uint16_t x, uint16_t y)
 
     if (contains(x, y, HIT_BOX_OFFSET))
     {
-        Serial.println("Slider");
         // Touch->saveStartPressTime();
         while (Touch->dataAvailable())
         {
@@ -114,14 +99,15 @@ bool Slider::onClick(uint16_t x, uint16_t y)
                     x = Touch->getX();
                     if(x < getX()) x = getX();
                     if(x > getX() + width) x = getX() + width;
+
                     setValue(map(x, getX(), getX() + width, minimum, maximum));
+
                     if(oldValue != value)
                     {
                         int screenSpaceValue = map(oldValue, minimum, maximum, getX(), getX() + width);
                         LCD->setColor(background);
                         LCD->fillRect(screenSpaceValue - 2, getY() - 2, screenSpaceValue + 2, getY() + height + 4);
                         draw();
-                        Serial.println(String(value) + " ->" + String(getX()));
                     }
 
                 } 
@@ -133,15 +119,15 @@ bool Slider::onClick(uint16_t x, uint16_t y)
                     y = Touch->getY();
                     if(y < getY()) y = getY();
                     if(y > getY() + height) y = getY() + height;
+
                     setValue(map(y, getY(), getY() + height, minimum, maximum));
+                    
                     if(oldValue != value)
                     {
                         int screenSpaceValue = map(oldValue, minimum, maximum, getY(), getY() + height);
                         LCD->setColor(background);
                         LCD->fillRect(getX() - 2, screenSpaceValue - 2, getX() + width + 4, screenSpaceValue + 2);
-                        draw();
-                        Serial.println(String(value) + " -> " + String(getY()));
-                        
+                        draw();                        
                     }
                 }
             }
@@ -208,8 +194,6 @@ void Slider::setValue(int value)
         this->value = maximum;
     else if (this->value < minimum)
         this->value = minimum;
-
-    Serial.println("Slider value : " + String(value));
 }
 
 void Slider::setTickSpacing(uint16_t spacing)
@@ -219,10 +203,6 @@ void Slider::setTickSpacing(uint16_t spacing)
         if (ticksValues != nullptr)
         {
             delete [] ticksValues;
-            if(ticksValues == nullptr)
-            {
-                Serial.println("destroy");
-            }
             ticksValues = nullptr;
         }
     }
