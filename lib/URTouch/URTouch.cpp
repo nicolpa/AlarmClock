@@ -152,6 +152,7 @@ void URTouch::read()
 
 bool URTouch::dataAvailable()
 {
+	delay(7);
 	bool avail;
 	pinMode(T_IRQ,  INPUT);
 	avail = !(rbi(P_IRQ, B_IRQ));
