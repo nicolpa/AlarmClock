@@ -9,8 +9,6 @@ public:
     Panel(lcd::UTFT* LCD, uint16_t x, uint16_t y, uint16_t w, uint16_t h, word color = VGA_WHITE, uint32_t backcolor = VGA_BLACK, word borderColor = VGA_WHITE);
     ~Panel();
 
-    bool onClick(uint16_t x, uint16_t y) override;
-
     void draw() override;
 
     /**

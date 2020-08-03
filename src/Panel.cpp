@@ -1,23 +1,13 @@
 #include "Panel.hpp"
 
 Panel::Panel(lcd::UTFT *LCD, uint16_t x, uint16_t y, uint16_t w, uint16_t h, word color, uint32_t backcolor, word borderColor)
-    : Container(LCD, x, y, w, h), borderColor(borderColor)
+    : Container(x, y, w, h), borderColor(borderColor)
 {
+    this->LCD = LCD;
 }
 
 Panel::~Panel()
 {
-}
-
-bool Panel::onClick(uint16_t x, uint16_t y)
-{
-    for (uint16_t i = 0; i < nComponents; i++)
-    {
-        if (components[i]->onClick(x, y))
-            return true;
-    }
-
-    return contains(x, y);
 }
 
 void Panel::draw()

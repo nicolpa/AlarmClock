@@ -10,6 +10,8 @@
 #include "Button.hpp"
 #include "RadioButton.hpp"
 #include "CheckBox.hpp"
+#include "ToggleButtonHolder.hpp"
+#include "RadioButtonHolder.hpp"
 
 lcd::UTFT LCD(ITDB32S, 38, 39, 40, 41);
 URTouch Touch(6, 5, 4, 3, 2);
@@ -18,8 +20,10 @@ Panel *pnlUpLeft, *pnlUpRight, *pnlBottomLeft, *pnlBottomRight;
 Label *lblUpLeft, *lblUpRight, *lblBottomLeft, *lblBottomRight;
 Slider *slrVertical, *slrHorizontal;
 Button *btn;
-RadioButton *roBtn;
 CheckBox *chkBtn;
+RadioButton *roBtn;
+RadioButton *roBtn2;
+RadioButtonHolder *roHolder;
 
 void setup()
 {
@@ -52,9 +56,14 @@ void setup()
 
     btn = new Button(&LCD, &Touch, 10, 25, 100, 20);
 
-    roBtn = new RadioButton(&LCD, &Touch, 10, 50, "Select me", SmallFont);
+    chkBtn = new CheckBox(&LCD, &Touch, 10, 50, "Select me", SmallFont);
 
-    chkBtn = new CheckBox(&LCD, &Touch, 10, 90, "Select me", SmallFont);
+    roBtn = new RadioButton(&LCD, &Touch, 10, 70, "Select me 2", SmallFont);
+    roBtn2 = new RadioButton(&LCD, &Touch, 10, 90, "Me too please", SmallFont);
+
+    roHolder = new RadioButtonHolder();
+    roHolder->add(roBtn);
+    roHolder->add(roBtn2);
 
     btn->setFont(SmallFont);
     btn->setText("Click me");
@@ -81,9 +90,9 @@ void setup()
     pnlUpLeft->add(slrHorizontal);
     pnlBottomRight->add(slrVertical);
 
-    pnlUpRight->add(roBtn);
-
     pnlUpRight->add(chkBtn);
+
+    pnlUpRight->add(roHolder);
 
     pnlUpRight->draw();
     pnlBottomLeft->draw();

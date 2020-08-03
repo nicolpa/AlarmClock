@@ -1,7 +1,7 @@
 #include "Container.hpp"
 
-Container::Container(lcd::UTFT* LCD, uint16_t x, uint16_t y, uint16_t width, uint16_t height) 
-    : Component(LCD, x, y, width, height)
+Container::Container(uint16_t x, uint16_t y, uint16_t width, uint16_t height) 
+    : Component(nullptr, x, y, width, height)
 {
     
 }
@@ -98,5 +98,9 @@ void Container::draw()
 
 bool Container::onClick(uint16_t x, uint16_t y) 
 {
-    return false;
+    for (uint16_t i = 0; i < nComponents; i++)
+        if (components[i]->onClick(x, y))
+            return true;
+
+    return contains(x, y);
 }

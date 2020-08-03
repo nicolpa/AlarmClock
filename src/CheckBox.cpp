@@ -21,7 +21,6 @@ void CheckBox::draw()
     update();
 }
 
-
 void CheckBox::update() 
 {
     LCD->setColor((selected) ? foreground : background);

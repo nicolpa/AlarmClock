@@ -2,6 +2,8 @@
 
 #include "ToggleButton.hpp"
 
+// class ToggleButtonHolder;
+
 class CheckBox : public ToggleButton
 {
 

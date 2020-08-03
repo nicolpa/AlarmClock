@@ -20,6 +20,14 @@ void RadioButton::draw()
     update();
 }
 
+bool RadioButton::onClick(uint16_t x, uint16_t y) 
+{
+    if(!selected)
+        return ToggleButton::onClick(x, y);
+    
+    return false;
+}
+
 void RadioButton::update() 
 {
     LCD->setColor((selected) ? foreground : background);
