@@ -9,6 +9,7 @@
 #include "Slider.hpp"
 #include "Button.hpp"
 #include "RadioButton.hpp"
+#include "CheckBox.hpp"
 
 lcd::UTFT LCD(ITDB32S, 38, 39, 40, 41);
 URTouch Touch(6, 5, 4, 3, 2);
@@ -18,6 +19,7 @@ Label *lblUpLeft, *lblUpRight, *lblBottomLeft, *lblBottomRight;
 Slider *slrVertical, *slrHorizontal;
 Button *btn;
 RadioButton *roBtn;
+CheckBox *chkBtn;
 
 void setup()
 {
@@ -52,6 +54,8 @@ void setup()
 
     roBtn = new RadioButton(&LCD, &Touch, 10, 50, "Select me", SmallFont);
 
+    chkBtn = new CheckBox(&LCD, &Touch, 10, 90, "Select me", SmallFont);
+
     btn->setFont(SmallFont);
     btn->setText("Click me");
 
@@ -66,7 +70,7 @@ void setup()
 
     slrHorizontal->setValue(2);
     slrVertical->setValue(59);
-    
+
     pnlBottomLeft->add(btn);
 
     pnlUpLeft->add(lblUpLeft);
@@ -78,6 +82,8 @@ void setup()
     pnlBottomRight->add(slrVertical);
 
     pnlUpRight->add(roBtn);
+
+    pnlUpRight->add(chkBtn);
 
     pnlUpRight->draw();
     pnlBottomLeft->draw();
