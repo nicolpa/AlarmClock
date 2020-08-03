@@ -8,9 +8,25 @@ ToggleButton::ToggleButton(lcd::UTFT* LCD, URTouch* Touch, uint16_t x, uint16_t 
     LCD->setFont(font);
     width  = 20 + (LCD->getFontXsize() * String(label).length());
     height = (LCD->getFontYsize() < 15) ? 15 : LCD->getFontYsize();
+
+    this->font = font;
+    text = label;
 }
 
 ToggleButton::~ToggleButton() {}
+
+bool ToggleButton::onClick(uint16_t x, uint16_t y) 
+{
+    if(contains(x, y))
+    {
+        while(Touch->dataAvailable());
+        toggle();
+        update();
+        return true;
+    }
+
+    return false;
+}
 
 bool ToggleButton::isSelected() 
 {

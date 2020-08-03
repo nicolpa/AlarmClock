@@ -17,7 +17,7 @@ bool Panel::onClick(uint16_t x, uint16_t y)
             return true;
     }
 
-    return Component::onClick(x, y);
+    return contains(x, y);
 }
 
 void Panel::draw()

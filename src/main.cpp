@@ -8,6 +8,7 @@
 #include "Label.hpp"
 #include "Slider.hpp"
 #include "Button.hpp"
+#include "RadioButton.hpp"
 
 lcd::UTFT LCD(ITDB32S, 38, 39, 40, 41);
 URTouch Touch(6, 5, 4, 3, 2);
@@ -16,6 +17,7 @@ Panel *pnlUpLeft, *pnlUpRight, *pnlBottomLeft, *pnlBottomRight;
 Label *lblUpLeft, *lblUpRight, *lblBottomLeft, *lblBottomRight;
 Slider *slrVertical, *slrHorizontal;
 Button *btn;
+RadioButton *roBtn;
 
 void setup()
 {
@@ -47,9 +49,11 @@ void setup()
     slrVertical = new Slider(&LCD, &Touch, 10, 10, pnlUpLeft->getHeight() - 20, Orientation::VERTICAL);
 
     btn = new Button(&LCD, &Touch, 10, 25, 100, 20);
+
+    roBtn = new RadioButton(&LCD, &Touch, 10, 50, "Select me", SmallFont);
+
     btn->setFont(SmallFont);
     btn->setText("Click me");
-    pnlBottomLeft->add(btn);
 
     slrHorizontal->setMinimum(1);
     slrHorizontal->setMaximum(7);
@@ -62,6 +66,8 @@ void setup()
 
     slrHorizontal->setValue(2);
     slrVertical->setValue(59);
+    
+    pnlBottomLeft->add(btn);
 
     pnlUpLeft->add(lblUpLeft);
     pnlUpRight->add(lblUpRight);
@@ -70,6 +76,8 @@ void setup()
 
     pnlUpLeft->add(slrHorizontal);
     pnlBottomRight->add(slrVertical);
+
+    pnlUpRight->add(roBtn);
 
     pnlUpRight->draw();
     pnlBottomLeft->draw();
