@@ -39,8 +39,6 @@ protected:
      */
     String text;
 
-    URTouch* Touch;
-
     /**
      * Whether or not the button is currently being click on
      */

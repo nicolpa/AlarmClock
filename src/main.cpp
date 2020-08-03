@@ -7,6 +7,7 @@
 #include "Panel.hpp"
 #include "Label.hpp"
 #include "Slider.hpp"
+#include "Button.hpp"
 
 lcd::UTFT LCD(ITDB32S, 38, 39, 40, 41);
 URTouch Touch(6, 5, 4, 3, 2);
@@ -14,6 +15,7 @@ URTouch Touch(6, 5, 4, 3, 2);
 Panel *pnlUpLeft, *pnlUpRight, *pnlBottomLeft, *pnlBottomRight;
 Label *lblUpLeft, *lblUpRight, *lblBottomLeft, *lblBottomRight;
 Slider *slrVertical, *slrHorizontal;
+Button *btn;
 
 void setup()
 {
@@ -43,6 +45,11 @@ void setup()
 
     slrHorizontal = new Slider(&LCD, &Touch, pnlUpLeft->getX() + 10, pnlUpLeft->getY() + pnlUpLeft->getHeight() - 20, pnlUpLeft->getWidth() - 20);
     slrVertical = new Slider(&LCD, &Touch, 10, 10, pnlUpLeft->getHeight() - 20, Orientation::VERTICAL);
+
+    btn = new Button(&LCD, &Touch, 10, 25, 100, 20);
+    btn->setFont(SmallFont);
+    btn->setText("Click me");
+    pnlBottomLeft->add(btn);
 
     slrHorizontal->setMinimum(1);
     slrHorizontal->setMaximum(7);

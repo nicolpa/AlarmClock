@@ -157,8 +157,6 @@ bool URTouch::dataAvailable()
 	pinMode(T_IRQ,  INPUT);
 	avail = !(rbi(P_IRQ, B_IRQ));
 	pinMode(T_IRQ,  OUTPUT);
-	if(startPressTime != 0)
-		startPressTime = millis();
 	return avail;
 }
 
