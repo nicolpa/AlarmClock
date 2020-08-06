@@ -12,6 +12,7 @@
 #include "CheckBox.hpp"
 #include "ToggleButtonHolder.hpp"
 #include "RadioButtonHolder.hpp"
+#include "Frame.hpp"
 
 lcd::UTFT LCD(ITDB32S, 38, 39, 40, 41);
 URTouch Touch(6, 5, 4, 3, 2);
@@ -24,6 +25,7 @@ CheckBox *chkBtn;
 RadioButton *roBtn;
 RadioButton *roBtn2;
 RadioButtonHolder *roHolder;
+Frame *frm;
 
 void setup()
 {
@@ -61,6 +63,8 @@ void setup()
     roBtn = new RadioButton(&LCD, &Touch, 10, 70, "Select me 2", SmallFont);
     roBtn2 = new RadioButton(&LCD, &Touch, 10, 90, "Me too please", SmallFont);
 
+    frm = new Frame(&LCD);
+
     roHolder = new RadioButtonHolder();
     roHolder->add(roBtn);
     roHolder->add(roBtn2);
@@ -94,10 +98,16 @@ void setup()
 
     pnlUpRight->add(roHolder);
 
-    pnlUpRight->draw();
-    pnlBottomLeft->draw();
-    pnlBottomRight->draw();
-    pnlUpLeft->draw();
+    frm->add(pnlBottomLeft);
+    frm->add(pnlBottomRight);
+    frm->add(pnlUpLeft);
+    frm->add(pnlUpRight);
+
+    // pnlUpRight->draw();
+    // pnlBottomLeft->draw();
+    // pnlBottomRight->draw();
+    // pnlUpLeft->draw();
+    frm->draw();
 }
 
 void loop()
@@ -107,9 +117,10 @@ void loop()
         Touch.read();
         int x = Touch.getX();
         int y = Touch.getY();
-        pnlUpLeft->onClick(x, y);
-        pnlUpRight->onClick(x, y);
-        pnlBottomLeft->onClick(x, y);
-        pnlBottomRight->onClick(x, y);
+        frm->onClick(x, y);
+        // pnlUpLeft->onClick(x, y);
+        // pnlUpRight->onClick(x, y);
+        // pnlBottomLeft->onClick(x, y);
+        // pnlBottomRight->onClick(x, y);
     }
 }

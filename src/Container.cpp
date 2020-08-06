@@ -91,9 +91,7 @@ void Container::removeAll()
 void Container::draw() 
 {
     for(uint16_t i = 0; i < nComponents; i++)
-    {
         components[i]->draw();
-    }
 }
 
 bool Container::onClick(uint16_t x, uint16_t y) 
