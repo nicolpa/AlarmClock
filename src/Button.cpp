@@ -45,7 +45,8 @@ void Button::draw()
     // ((this->x + width) - (text.length() * LCD->getFontXsize())) / 2;
     int y = ceil(getY() + (height / 2.0f) - LCD->getFontYsize() / 2.0f);
     // ((this->y + height) - LCD->getFontYsize()) / 2;
-
+    if(!textHighlight)
+        LCD->setColor(foreground);
     LCD->print(text, x, y);
 }
 

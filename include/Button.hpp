@@ -36,4 +36,9 @@ private:
      * Whether or not the button display a border
      */
     bool borderless = false;
+
+    /**
+     * Change the text color when pressed
+     */
+    bool textHighlight = false;
 };
