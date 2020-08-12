@@ -6,6 +6,13 @@ Button::Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t 
     clickable = true;
 }
 
+Button::Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t w, uint16_t h, String text, uint8_t *font, word pressedColor, word color, uint32_t backcolor) 
+    : AbstractButton(LCD, Touch, x, y, w, h, color, backcolor), pressedColor(pressedColor)
+{
+    setText(text);
+    setFont(font);
+}
+
 Button::~Button()
 {
 }
