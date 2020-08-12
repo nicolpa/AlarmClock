@@ -6,8 +6,8 @@ class Button : public AbstractButton
 {
 
 public:
-    Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t w, uint16_t h, word pressedColor = VGA_GREEN, word color = VGA_WHITE, uint32_t backcolor = VGA_TRANSPARENT);
-    Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t w, uint16_t h, String text, uint8_t *font, word pressedColor = VGA_GREEN, word color = VGA_WHITE, uint32_t backcolor = VGA_TRANSPARENT);
+    Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t w, uint16_t h, word pressedColor = VGA_GREEN, word color = VGA_WHITE, uint32_t backcolor = VGA_BLACK);
+    Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t w, uint16_t h, String text, uint8_t *font, word pressedColor = VGA_GREEN, word color = VGA_WHITE, uint32_t backcolor = VGA_BLACK);
     ~Button();
 
     /**
