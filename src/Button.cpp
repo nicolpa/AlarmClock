@@ -13,6 +13,12 @@ Button::Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t 
     setFont(font);
 }
 
+Button::Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t w, uint16_t h, Shape *shape, word pressedColor, word color, uint32_t backcolor) 
+    : AbstractButton(LCD, Touch, x, y, w, h, color, backcolor), pressedColor(pressedColor), shape(shape)
+{
+    
+}
+
 Button::~Button()
 {
 }
@@ -47,7 +53,10 @@ void Button::draw()
 
     if(!textHighlight)
         LCD->setColor(foreground);
-    LCD->print(text, x, y);
+    if(text != "")
+        LCD->print(text, x, y);
+    else if(shape != nullptr)
+        shape->draw();
 }
 
 bool Button::onClick(uint16_t x, uint16_t y)
@@ -73,4 +82,9 @@ bool Button::onClick(uint16_t x, uint16_t y)
     }
 
     return false;
+}
+
+void Button::setShape(Shape *shape) 
+{
+    this->shape = shape;
 }

@@ -5,4 +5,5 @@
 .vscode/ipch
 .vscode/extensions.json
 .travis.yml
+.vscode/settings.json
 .directory

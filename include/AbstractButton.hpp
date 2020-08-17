@@ -37,7 +37,7 @@ protected:
     /**
      * The text displayed by the button
      */
-    String text;
+    String text = "";
 
     /**
      * Whether or not the button is currently being click on
