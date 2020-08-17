@@ -18,6 +18,8 @@ Component::Component(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uin
 
 Component::~Component() 
 {
+    LCD->setColor(VGA_BLACK);
+    LCD->fillRect(getX(), getY(), getX() + width, getY() + height);
     if(parent != nullptr)
         delete parent;
 }
