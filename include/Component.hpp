@@ -236,6 +236,11 @@ protected:
      */
     uint8_t *font = nullptr;
 
+    /**
+     * Whether or not the component has focus
+     */
+    bool focus = false;
+
 
     /**
      * Test whether or not the specified point is contained within this component.

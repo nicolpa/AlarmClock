@@ -26,7 +26,16 @@ Component::~Component()
 
 bool Component::onClick(uint16_t x, uint16_t y) 
 {
-    return contains(x, y);
+    if(contains(x, y))
+    {
+        focus = true;
+        return true;
+    }
+    else
+    {
+        focus = false;
+        return false;
+    }
 }
 
 bool Component::isShowing() 
