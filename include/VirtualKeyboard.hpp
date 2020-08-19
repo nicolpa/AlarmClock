@@ -12,24 +12,31 @@
 #define SPE1 4
 #define SPE2 5
 
+class TextArea;
+
 class VirtualKeyboard : public Component
 {
 
 public:
-    VirtualKeyboard(lcd::UTFT *LCD, URTouch *Touch, String text = "");
+    VirtualKeyboard(lcd::UTFT *LCD, URTouch *Touch);
     ~VirtualKeyboard();
 
     void draw() override;
     bool onClick(uint16_t x, uint16_t y) override;
 
-    String getText();
+
+    void subscribeComponent(TextArea *component);
+    void unsubscribeComponent();
+
+    void notify(char character);
 
 private:
+    TextArea *observer = nullptr;
+
     Panel *currentLayout;
     Panel *SpecialLayout;
     Panel *TextLayout;
 
-    String text;
 
     Button *buttons[34];
 

@@ -15,6 +15,7 @@
 #include "Frame.hpp"
 #include "VirtualKeyboard.hpp"
 #include "Shape.hpp"
+#include "TextArea.hpp"
 
 lcd::UTFT LCD(ITDB32S, 38, 39, 40, 41);
 URTouch Touch(6, 5, 4, 3, 2);
@@ -29,6 +30,7 @@ RadioButton *roBtn2;
 RadioButtonHolder *roHolder;
 Frame *frm;
 VirtualKeyboard *keyboard;
+TextArea *txtArea;
 
 void setup()
 {
@@ -71,6 +73,9 @@ void setup()
     keyboard = new VirtualKeyboard(&LCD, &Touch);
 
     roHolder = new RadioButtonHolder();
+
+    txtArea = new TextArea(&LCD, &Touch, 10, 10, pnlUpLeft->getWidth() - 20);
+
     roHolder->add(roBtn);
     roHolder->add(roBtn2);
 
@@ -103,13 +108,15 @@ void setup()
 
     pnlUpRight->add(roHolder);
 
+    pnlUpLeft->add(txtArea);
+
 
     // frm->add(pnlBottomLeft);
     // frm->add(pnlBottomRight);
-    // frm->add(pnlUpLeft);
+    frm->add(pnlUpLeft);
     frm->add(pnlUpRight);
 
-    frm->add(keyboard);
+    // frm->add(keyboard);
     // pnlUpRight->draw();
     // pnlBottomLeft->draw();
     // pnlBottomRight->draw();

@@ -1,10 +1,9 @@
 #include "VirtualKeyboard.hpp"
+#include "TextArea.hpp"
 
-VirtualKeyboard::VirtualKeyboard(lcd::UTFT *LCD, URTouch *Touch, String text)
-    : Component(LCD, Touch, 0, 0, LCD->getDisplayXSize(), LCD->getDisplayYSize()), text(text)
+VirtualKeyboard::VirtualKeyboard(lcd::UTFT *LCD, URTouch *Touch)
+    : Component(LCD, Touch, 0, 110, LCD->getDisplayXSize() - 1, LCD->getDisplayYSize() - 111)
 {
-
-    
     shapeEnter = new Shape(LCD, segEnter, 5);
     shapeCapsUnlock = new Shape(LCD, segCapsUnlock, 7);
     shapeCapsTempLock = new Shape(LCD, segCapsTempLock, 8);
@@ -21,7 +20,7 @@ VirtualKeyboard::VirtualKeyboard(lcd::UTFT *LCD, URTouch *Touch, String text)
     buttons[28] = new Button(LCD, Touch, 250, 200, 25, 25, String(keysMin[28]), BigFont);
 
     buttons[29] = new Button(LCD, Touch, 70, 200, 175, 25, " ", SmallFont); //space
-    buttons[30] = new Button(LCD, Touch, 10, 170, 40, 25, shapeCapsUnlock);                  //CapsLock
+    buttons[30] = new Button(LCD, Touch, 10, 170, 40, 25, shapeCapsUnlock); //CapsLock
     buttons[31] = new Button(LCD, Touch, 265, 170, 40, 25);                 //Backspace
     buttons[32] = new Button(LCD, Touch, 10, 200, 25, 25, "123", SmallFont);
     buttons[33] = new Button(LCD, Touch, 280, 200, 25, 25, shapeEnter); //Enter
@@ -47,93 +46,104 @@ void VirtualKeyboard::draw()
 
 bool VirtualKeyboard::onClick(uint16_t x, uint16_t y)
 {
-    for (int i = 0; i < 34; i++)
+    if(Component::contains(x, y))
     {
-        if (buttons[i]->onClick(x, y))
+        for (int i = 0; i < 34; i++)
         {
-            if (i < 30)
+            if (buttons[i]->onClick(x, y))
             {
-                text += buttons[i]->getText();
-                if (CapsLock == TEMP_LOCK && keyboardPage == MAIN)
+                if (i < 30)
                 {
-                    CapsLock = UNLOCK;
-                    for (int j = 0; j < 26; j++)
+                    notify(buttons[i]->getText().c_str()[0]);
+                    if (CapsLock == TEMP_LOCK && keyboardPage == MAIN)
                     {
-                        buttons[j]->setText(String(keysMin[j]));
-                        buttons[j]->draw();
+                        CapsLock = UNLOCK;
+                        for (int j = 0; j < 26; j++)
+                        {
+                            buttons[j]->setText(String(keysMin[j]));
+                            buttons[j]->draw();
+                        }
+                        buttons[30]->draw();
+                    }
+                }
+                else if (i == 30 && keyboardPage == MAIN)
+                {
+                    switch (CapsLock)
+                    {
+                    case UNLOCK:
+                        CapsLock = TEMP_LOCK;
+                        for (int j = 0; j < 26; j++)
+                        {
+                            buttons[j]->setText(String(keysMaj[j]));
+                            buttons[j]->draw();
+                        }
+                        buttons[30]->setShape(shapeCapsTempLock);
+                        break;
+                    case TEMP_LOCK:
+                        CapsLock = HARD_LOCK;
+                        buttons[30]->setShape(shapeCapsHardLock);
+                        break;
+                    case HARD_LOCK:
+                    default:
+                        CapsLock = UNLOCK;
+                        for (int j = 0; j < 26; j++)
+                        {
+                            buttons[j]->setText(String(keysMin[j]));
+                            buttons[j]->draw();
+                        }
+                        buttons[30]->setShape(shapeCapsUnlock);
+                        break;
                     }
                     buttons[30]->draw();
                 }
-                LCD->setFont(SmallFont);
-                LCD->setColor(VGA_WHITE);
-                LCD->print(text, 10, 10);
-            }
-            else if (i == 30 && keyboardPage == MAIN)
-            {
-                switch (CapsLock)
+                else if (i == 31)
                 {
-                case UNLOCK:
-                    CapsLock = TEMP_LOCK;
-                    for (int j = 0; j < 26; j++)
-                    {
-                        buttons[j]->setText(String(keysMaj[j]));
-                        buttons[j]->draw();
-                    }
-                    buttons[30]->setShape(shapeCapsTempLock);
-                    break;
-                case TEMP_LOCK:
-                    CapsLock = HARD_LOCK;
-                    buttons[30]->setShape(shapeCapsHardLock);
-                    break;
-                case HARD_LOCK:
-                default:
-                    CapsLock = UNLOCK;
-                    for (int j = 0; j < 26; j++)
-                    {
-                        buttons[j]->setText(String(keysMin[j]));
-                        buttons[j]->draw();
-                    }
-                    buttons[30]->setShape(shapeCapsUnlock);
-                    break;
+                    notify('\0');
                 }
-                buttons[30]->draw();
-            }
-            else if (i == 31)
-                text.remove(text.length() - 1);
-            else if (i == 32)
-            {
-                switch (keyboardPage)
+                else if (i == 32)
                 {
-                case MAIN:
-                    keyboardPage = SPE1;
-                    for (int j = 0; j < 29; j++)
-                        buttons[j]->setText(String(keysSpe1[j]));
-                    buttons[32]->setText("abc");
-                    draw();
-                    break;
-                case SPE1:
-                    keyboardPage = MAIN;
-                    for (int j = 0; j < 29; j++)
-                        buttons[j]->setText(String((CapsLock == UNLOCK) ? keysMin[j] : keysMaj[j]));
-                    buttons[32]->setText("123");
-                    draw();
-                    break;
-                default:
-                    break;
+                    switch (keyboardPage)
+                    {
+                    case MAIN:
+                        keyboardPage = SPE1;
+                        for (int j = 0; j < 29; j++)
+                            buttons[j]->setText(String(keysSpe1[j]));
+                        buttons[32]->setText("abc");
+                        draw();
+                        break;
+                    case SPE1:
+                        keyboardPage = MAIN;
+                        for (int j = 0; j < 29; j++)
+                            buttons[j]->setText(String((CapsLock == UNLOCK) ? keysMin[j] : keysMaj[j]));
+                        buttons[32]->setText("123");
+                        draw();
+                        break;
+                    default:
+                        break;
+                    }
+                }
+                else
+                {
                 }
             }
-            else
-            {
-                Serial.println(text);
-            }
-
-            return true;
         }
+        return true;
     }
     return false;
 }
 
-String VirtualKeyboard::getText()
+void VirtualKeyboard::subscribeComponent(TextArea *component)
 {
-    return text;
+    observer = component;
+}
+
+void VirtualKeyboard::unsubscribeComponent()
+{
+    observer = nullptr;
+}
+
+void VirtualKeyboard::notify(char character)
+{
+    if (observer != nullptr)
+        observer->update(character);
 }

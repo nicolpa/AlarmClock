@@ -14,6 +14,6 @@ Shape::~Shape()
 void Shape::draw() 
 {
     LCD->setColor(color);
-    for(int i = 0; i < nSegments; i++)
+    for(uint16_t i = 0; i < nSegments; i++)
         segments[i].draw(LCD, color);
 }
