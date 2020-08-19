@@ -26,6 +26,11 @@ public:
     virtual void draw() = 0;
 
     /**
+     * Clear the component from the display
+     */
+    void clear();
+
+    /**
      * Return true if the component is clicked
      * @param x The x position of the click in the screen coordinates
      * @param y The y position of the click in the screen coordinates
