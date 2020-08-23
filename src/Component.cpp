@@ -27,7 +27,6 @@ Component::~Component()
 void Component::clear() 
 {
     LCD->setColor(VGA_BLACK);
-    Serial.println("(" + String(getX()) + ", " + String(getY()) + ", " + String(getX() + width) +", " +  String(getY() + height));
     LCD->fillRect(getX(), getY(), getX() + width, getY() + height);
 }
 

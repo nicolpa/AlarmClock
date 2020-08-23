@@ -2,6 +2,7 @@
 
 #include "UTFT.h"
 #include "URTouch.h"
+#include "DS1307.h"
 
 #include "Component.hpp"
 #include "Panel.hpp"
@@ -20,133 +21,95 @@
 lcd::UTFT LCD(ITDB32S, 38, 39, 40, 41);
 URTouch Touch(6, 5, 4, 3, 2);
 
-Panel *pnlUpLeft, *pnlUpRight, *pnlBottomLeft, *pnlBottomRight;
-Label *lblUpLeft, *lblUpRight, *lblBottomLeft, *lblBottomRight;
-Slider *slrVertical, *slrHorizontal;
-Button *btn;
-CheckBox *chkBtn;
-RadioButton *roBtn;
-RadioButton *roBtn2;
-RadioButtonHolder *roHolder;
-Frame *frm;
-VirtualKeyboard *keyboard;
-TextArea *txtArea;
+DS1307  rtc(SDA, SCL);
+Time time;
 
-void sayHello()
+Frame *currentFrame;
+
+Frame *frmMain;
+Label *lblClock, *lblDate, *lblDow;
+Label *lblTemp;
+Button *btnSettings;
+
+Frame *frmSettings;
+Label *lblSettingsHeader;
+
+#define LM35 A5
+
+float getTemp()
 {
-    Serial.println("Hello");
+    return analogRead(LM35) / (10 / 1.0742);
 }
 
-void longHello()
+void switchFrame()
 {
-    Serial.println("Long hello");
+    currentFrame->clear();
+    if(currentFrame == frmMain)
+        currentFrame = frmSettings;
+    else
+        currentFrame = frmMain;
 }
 
 void setup()
 {
     Serial.begin(9600);
 
+    rtc.begin();
+    rtc.halt(false);
+
+    time = rtc.getTime();
+
     LCD.fade(true);
     LCD.InitLCD();
     Touch.InitTouch();
     Touch.setPrecision(PREC_MEDIUM);
 
-    pnlUpLeft       = new Panel(&LCD, 0, 0
-                                    , LCD.getDisplayXSize() / 2, LCD.getDisplayYSize() / 2);
+    analogReference(INTERNAL1V1);
+    pinMode(LM35, INPUT);
 
-    pnlUpRight      = new Panel(&LCD, LCD.getDisplayXSize() / 2, 0
-                                    , (LCD.getDisplayXSize() / 2) - 1, LCD.getDisplayYSize() / 2);
+    lblClock = new Label(&LCD, CENTER, (LCD.getDisplayYSize() - 50) / 2, rtc.getTimeStr(), SevenSegNumFontPlus);
+    lblDow = new Label(&LCD, LEFT, 2, rtc.getDOWStr(), SmallFont);
+    lblDate = new Label(&LCD, LEFT, 15, rtc.getDateStr(), SmallFont);
+    lblTemp = new Label(&LCD, RIGHT, 2, String(getTemp()) + " C", SmallFont);
+    btnSettings = new Button(&LCD, &Touch, LCD.getDisplayXSize() - 16, LCD.getDisplayYSize() - 16, 15, 15);
+    btnSettings->setFont(SmallFont);
+    btnSettings->setText("s");
 
-    pnlBottomLeft   = new Panel(&LCD, 0, LCD.getDisplayYSize() / 2
-                                    , LCD.getDisplayXSize() / 2, (LCD.getDisplayYSize() / 2) - 1);
+    frmMain = new Frame(&LCD, VGA_TRANSPARENT);
+    frmMain->add(lblClock);
+    frmMain->add(lblDow);
+    frmMain->add(lblDate);
+    frmMain->add(lblTemp);
+    frmMain->add(btnSettings);
 
-    pnlBottomRight  = new Panel(&LCD, LCD.getDisplayXSize() / 2, LCD.getDisplayYSize() / 2
-                                    , (LCD.getDisplayXSize() / 2) - 1, (LCD.getDisplayYSize() / 2) - 1);
+    lblSettingsHeader = new Label(&LCD, 2, 2, "Settings", SmallFont);
+    frmSettings = new Frame(&LCD, VGA_TRANSPARENT);
+    frmSettings->add(lblSettingsHeader);
+    frmSettings->add(btnSettings);
 
-    lblUpLeft = new Label(&LCD, 10, 10, "Upper left", SmallFont);
-    lblUpRight = new Label(&LCD, 10, 10, "Upper right", SmallFont);
-    lblBottomLeft = new Label(&LCD, 10, 10, "bottom left", SmallFont);
-    lblBottomRight = new Label(&LCD, 10, 10, "bottom right", SmallFont);
+    btnSettings->setNormalPressAction(&switchFrame);
 
-    slrHorizontal = new Slider(&LCD, &Touch, pnlUpLeft->getX() + 10, pnlUpLeft->getY() + pnlUpLeft->getHeight() - 20, pnlUpLeft->getWidth() - 20);
-    slrVertical = new Slider(&LCD, &Touch, 10, 10, pnlUpLeft->getHeight() - 20, Orientation::VERTICAL);
-
-    btn = new Button(&LCD, &Touch, 10, 25, 100, 20);
-
-    chkBtn = new CheckBox(&LCD, &Touch, 10, 50, "Select me", SmallFont);
-
-    roBtn = new RadioButton(&LCD, &Touch, 10, 70, "Select me 2", SmallFont);
-    roBtn2 = new RadioButton(&LCD, &Touch, 10, 90, "Me too please", SmallFont);
-
-    frm = new Frame(&LCD);
-
-    keyboard = new VirtualKeyboard(&LCD, &Touch);
-
-    roHolder = new RadioButtonHolder();
-
-    txtArea = new TextArea(&LCD, &Touch, 10, 10, pnlUpLeft->getWidth() - 20);
-
-    roHolder->add(roBtn);
-    roHolder->add(roBtn2);
-
-    btn->setFont(SmallFont);
-    btn->setText("Click me");
-
-    slrHorizontal->setMinimum(1);
-    slrHorizontal->setMaximum(7);
-    slrHorizontal->setShowTicks(true);
-
-    slrVertical->setTickSpacing(1);
-    slrVertical->setTickSpacing(20);
-    slrVertical->setSnapToTicks(true);
-    slrVertical->setShowTicks(true);
-
-    slrHorizontal->setValue(2);
-    slrVertical->setValue(59);
-
-    pnlBottomLeft->add(btn);
-
-    pnlUpLeft->add(lblUpLeft);
-    pnlUpRight->add(lblUpRight);
-    pnlBottomLeft->add(lblBottomLeft);
-    pnlBottomRight->add(lblBottomRight);
-
-    pnlUpLeft->add(slrHorizontal);
-    pnlBottomRight->add(slrVertical);
-
-    pnlUpRight->add(chkBtn);
-
-    pnlUpRight->add(roHolder);
-
-    pnlUpLeft->add(txtArea);
-
-    btn->setNormalPressAction(&sayHello);
-    btn->setLongPressAction(&longHello);
-
-    frm->add(pnlBottomLeft);
-    frm->add(pnlBottomRight);
-    frm->add(pnlUpLeft);
-    frm->add(pnlUpRight);
-
-    // frm->add(keyboard);
-    // pnlUpRight->draw();
-    // pnlBottomLeft->draw();
-    // pnlBottomRight->draw();
-    // pnlUpLeft->draw();
-    frm->draw();
+    currentFrame = frmMain;
 }
 
 void loop()
 {
+    if(time != rtc.getTime())
+    {
+        lblClock->setText(rtc.getTimeStr());
+        lblDow->setText(rtc.getDOWStr());
+        lblDate->setText(rtc.getDateStr());
+        lblTemp->setText(String(getTemp()) + " C");
+        currentFrame->draw();
+        LCD.drawCircle(307,4,2);
+        time = rtc.getTime();
+    }
+
     if(Touch.dataAvailable())
     {
         Touch.read();
         int x = Touch.getX();
         int y = Touch.getY();
-        frm->onClick(x, y);
-        // pnlUpLeft->onClick(x, y);
-        // pnlUpRight->onClick(x, y);
-        // pnlBottomLeft->onClick(x, y);
-        // pnlBottomRight->onClick(x, y);
+        frmMain->onClick(x, y);
     }
 }

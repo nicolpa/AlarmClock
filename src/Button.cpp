@@ -68,7 +68,6 @@ bool Button::onClick(uint16_t x, uint16_t y)
 
         Touch->saveStartPressTime();
         while(Touch->dataAvailable());
-        Serial.println(String(Touch->getElapsedTime()));
         if(Touch->getElapsedTime() < LONG_PRESS)
         {
             if(normalPressAction != nullptr)

@@ -69,6 +69,18 @@ public:
 	uint8_t		dow;
 
 	Time();
+
+	bool operator==(const Time& t)
+	{
+		return hour == t.hour && min == t.min && sec == t.sec &&
+			   date == t.date && mon == t.mon && year == t.year && dow == t.dow;
+	}
+
+	bool operator!=(const Time& t)
+	{
+		return !(hour == t.hour && min == t.min && sec == t.sec &&
+			   date == t.date && mon == t.mon && year == t.year && dow == t.dow);
+	}
 };
 
 class DS1307_RAM
