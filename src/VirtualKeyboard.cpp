@@ -123,8 +123,7 @@ bool VirtualKeyboard::onClick(uint16_t x, uint16_t y)
                     }
                 }
                 else
-                {
-                }
+                    notify('\n');
             }
         }
         return true;

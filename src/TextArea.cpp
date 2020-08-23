@@ -83,6 +83,11 @@ void TextArea::update(char character)
         LCD->setColor(VGA_BLACK);
         LCD->fillRect(x, getY() + 5, x + LCD->getFontXsize(), getY() + 5 + LCD->getFontYsize());
     }
+    else if(character == '\n')
+    {
+        focus = false;
+        keyboard->clear();
+    }
     else
     {
         if(text.length() <= maxLength)
