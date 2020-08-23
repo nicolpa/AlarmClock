@@ -174,6 +174,14 @@ public:
      */
     void setFont(uint8_t *font);
 
+    void setNormalPressAction(void (*normalPressAction)(void));
+
+    void setLongPressAction(void (*longPressAction)(void));
+
+    void removeNormalPressAction();
+
+    void removeLongPressAction();
+
 protected:
     lcd::UTFT *LCD;
     URTouch *Touch = nullptr;
@@ -246,6 +254,15 @@ protected:
      */
     bool focus = false;
 
+    /**
+     * Function to execute when the component is pressed
+     */
+    void (*normalPressAction)(void) = nullptr;
+
+    /**
+     * Function to execute when the component is pressed for a long time
+     */
+    void (*longPressAction)(void) = nullptr;
 
     /**
      * Test whether or not the specified point is contained within this component.

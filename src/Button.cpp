@@ -63,17 +63,23 @@ bool Button::onClick(uint16_t x, uint16_t y)
 {
     if (enable && contains(x, y))
     {
-        // Touch->saveStartPressTime();
         pressed = true;
         draw();
-        while (Touch->dataAvailable());
-        
-        // if (Touch->getElapsedTime() >= 750)
-        //     Serial.println("Long press");
-        // else
-        //     Serial.println("Normal press");
 
-        // Touch->resetStartPressTime();
+        Touch->saveStartPressTime();
+        while(Touch->dataAvailable());
+        Serial.println(String(Touch->getElapsedTime()));
+        if(Touch->getElapsedTime() < LONG_PRESS)
+        {
+            if(normalPressAction != nullptr)
+                normalPressAction();
+        }
+        else
+        {
+            if(longPressAction != nullptr)
+                longPressAction();
+        }
+        Touch->resetStartPressTime();
 
         pressed = false;
         draw();

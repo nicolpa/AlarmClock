@@ -33,9 +33,22 @@ void Component::clear()
 
 bool Component::onClick(uint16_t x, uint16_t y) 
 {
-    if(contains(x, y))
+    if(enable && contains(x, y))
     {
         focus = true;
+        if(Touch != nullptr)
+        {
+            Touch->saveStartPressTime();
+            while(Touch->dataAvailable());
+            if(Touch->getElapsedTime() < LONG_PRESS)
+                if(normalPressAction != nullptr)
+                    normalPressAction();
+            else
+                if(longPressAction != nullptr)
+                    longPressAction();
+            Touch->resetStartPressTime();
+        }
+
         return true;
     }
     else
@@ -153,6 +166,26 @@ void Component::setBounds(uint16_t x, uint16_t y, uint16_t width, uint16_t heigh
 void Component::setFont(uint8_t *font) 
 {
     this->font = font;
+}
+
+void Component::setNormalPressAction(void (*normalPressAction)(void)) 
+{
+    this->normalPressAction = normalPressAction;
+}
+
+void Component::setLongPressAction(void (*longPressAction)(void)) 
+{
+    this->longPressAction = longPressAction;
+}
+
+void Component::removeNormalPressAction() 
+{
+    normalPressAction = nullptr;
+}
+
+void Component::removeLongPressAction() 
+{
+    longPressAction = nullptr;
 }
 
 bool Component::contains(uint16_t x, uint16_t y, uint16_t hitboxOffset = 0) 

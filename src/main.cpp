@@ -32,6 +32,16 @@ Frame *frm;
 VirtualKeyboard *keyboard;
 TextArea *txtArea;
 
+void sayHello()
+{
+    Serial.println("Hello");
+}
+
+void longHello()
+{
+    Serial.println("Long hello");
+}
+
 void setup()
 {
     Serial.begin(9600);
@@ -110,9 +120,11 @@ void setup()
 
     pnlUpLeft->add(txtArea);
 
+    btn->setNormalPressAction(&sayHello);
+    btn->setLongPressAction(&longHello);
 
-    // frm->add(pnlBottomLeft);
-    // frm->add(pnlBottomRight);
+    frm->add(pnlBottomLeft);
+    frm->add(pnlBottomRight);
     frm->add(pnlUpLeft);
     frm->add(pnlUpRight);
 

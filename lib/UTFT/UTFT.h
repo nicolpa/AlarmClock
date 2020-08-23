@@ -161,6 +161,8 @@
 #define DEFAULT_BACKLIGHT_STATE true
 #define DEFAULT_FADE_TIME 1500					//time in ms
 
+#define LONG_PRESS 750
+
 #if defined(__AVR__)
 	#include "Arduino.h"
 	#include "hardware/avr/HW_AVR_defines.h"
