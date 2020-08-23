@@ -10,6 +10,18 @@ public:
     ~Label();
 
     void draw() override;
+
+    /**
+     * Set the text of the label
+     * @param text The new text
+     */
+    void setText(String text);
+
+    /**
+     * Get the tetx of the label
+     * @return The current text
+     */
+    String getText();
     
 private:
     /**

@@ -28,3 +28,13 @@ void Label::draw()
 
     LCD->print(toDisplay, getX(), getY());
 }
+
+void Label::setText(String text) 
+{
+    this->text = text;
+}
+
+String Label::getText() 
+{
+    return text;
+}
