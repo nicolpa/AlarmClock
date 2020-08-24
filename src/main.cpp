@@ -17,6 +17,7 @@
 #include "VirtualKeyboard.hpp"
 #include "Shape.hpp"
 #include "TextArea.hpp"
+#include "Alarm.hpp"
 
 lcd::UTFT LCD(ITDB32S, 38, 39, 40, 41);
 URTouch Touch(6, 5, 4, 3, 2);
@@ -34,7 +35,10 @@ Button *btnSettings;
 Frame *frmSettings;
 Label *lblSettingsHeader;
 
+Alarm *alarm1;
+
 #define LM35 A5
+
 
 float getTemp()
 {
@@ -66,6 +70,7 @@ void setup()
 
     analogReference(INTERNAL1V1);
     pinMode(LM35, INPUT);
+    pinMode(SPEAKER, OUTPUT);
 
     lblClock = new Label(&LCD, CENTER, (LCD.getDisplayYSize() - 50) / 2, rtc.getTimeStr(), SevenSegNumFontPlus);
     lblDow = new Label(&LCD, LEFT, 2, rtc.getDOWStr(), SmallFont);
@@ -90,6 +95,8 @@ void setup()
     btnSettings->setNormalPressAction(&switchFrame);
 
     currentFrame = frmMain;
+
+    alarm1 = new Alarm(12, 4);
 }
 
 void loop()
@@ -103,6 +110,8 @@ void loop()
         currentFrame->draw();
         LCD.drawCircle(307,4,2);
         time = rtc.getTime();
+        if(alarm1->check(time))
+            alarm1->ring();
     }
 
     if(Touch.dataAvailable())
