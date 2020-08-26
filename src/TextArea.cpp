@@ -3,9 +3,8 @@
 TextArea::~TextArea() {
 
 }
-TextArea::TextArea(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t width, uint8_t *font,
-             word foreground, uint32_t background, word disableForeground, uint32_t disableBackground) 
-    : Component(LCD, x, y, width, 0, foreground, background, disableForeground, disableBackground)
+TextArea::TextArea(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t width, uint8_t *font) 
+    : Component(LCD, x, y, width, 0)
 {
     this->Touch = Touch;
     this->font = font;
@@ -16,8 +15,8 @@ TextArea::TextArea(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint1
     keyboard->subscribeComponent(this);
 }
 
-TextArea::TextArea(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t width, String text, uint8_t *font, word foreground, uint32_t background, word disableForeground, uint32_t disableBackground) 
-    : Component(LCD, x, y, width, 0, foreground, background, disableForeground, disableBackground), text(text)
+TextArea::TextArea(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t width, String text, uint8_t *font)
+    : Component(LCD, x, y, width, 0), text(text)
 {
     this->Touch = Touch;
     this->font = font;

@@ -22,7 +22,7 @@
 lcd::UTFT LCD(ITDB32S, 38, 39, 40, 41);
 URTouch Touch(6, 5, 4, 3, 2);
 
-DS1307  rtc(SDA, SCL);
+DS1307 rtc(SDA, SCL);
 Time time;
 
 Frame *currentFrame;
@@ -37,8 +37,22 @@ Label *lblSettingsHeader;
 
 Alarm *alarm1;
 
-#define LM35 A5
+Panel *pnlSettingsHeader;
+Panel *pnlClockSettings;
+Panel *pnlDateDowSettings;
+Panel *pnlAlarmsSettings;
+Panel *pnlBtnSettings;
 
+Shape *shapeBtnSettings;
+
+Button *btnHourUp, *btnMinUp, *btnSecUp, *btnDayUp, *btnMonthUp, *btnYearUp;
+Button *btnHourDown, *btnMinDown, *btnSecDown, *btnDayDown, *btnMonthDown, *btnYearDown;
+Label *lblClockSettings, *lblDateSettings;
+
+Alarm *Alarms[5];
+uint8_t nAlarm = 0;
+
+#define LM35 A5
 
 float getTemp()
 {
@@ -48,10 +62,71 @@ float getTemp()
 void switchFrame()
 {
     currentFrame->clear();
-    if(currentFrame == frmMain)
+    if (currentFrame == frmMain)
         currentFrame = frmSettings;
     else
         currentFrame = frmMain;
+}
+
+void loadMainScreen()
+{
+    lblClock = new Label(&LCD, HorizontalAlignment::Center, VerticalAlignment::Center, rtc.getTimeStr(), SevenSegNumFontPlus);
+    // lblClock->draw();
+    lblDow = new Label(&LCD, HorizontalAlignment::Left, 2, rtc.getDOWStr(), SmallFont);
+    lblDate = new Label(&LCD, HorizontalAlignment::Left, 15, rtc.getDateStr(), SmallFont);
+    lblTemp = new Label(&LCD, HorizontalAlignment::Right, 2, String(getTemp()) + " C", SmallFont);
+
+    btnSettings = new Button(&LCD, &Touch, HorizontalAlignment::Right, VerticalAlignment::Down, 15, 15);
+
+    static Segment segBtnSettings[3] =
+        {
+            {btnSettings->getX() + 2, btnSettings->getY() + 3, btnSettings->getX() + btnSettings->getWidth() - 2, btnSettings->getY() + 4, true, true},
+            {btnSettings->getX() + 2, btnSettings->getY() + 7, btnSettings->getX() + btnSettings->getWidth() - 2, btnSettings->getY() + 8, true, true},
+            {btnSettings->getX() + 2, btnSettings->getY() + 11, btnSettings->getX() + btnSettings->getWidth() - 2, btnSettings->getY() + 12, true, true}
+        };
+
+    shapeBtnSettings = new Shape(&LCD, segBtnSettings, 3);
+
+    btnSettings->setShape(shapeBtnSettings);
+    btnSettings->setBorderless(true);
+
+    frmMain = new Frame(&LCD);
+    frmMain->add(lblClock);
+    frmMain->add(lblDow);
+    frmMain->add(lblDate);
+    frmMain->add(lblTemp);
+    frmMain->add(btnSettings);
+    // frmMain->draw();
+}
+
+void loadSettingsScreen()
+{
+    lblSettingsHeader = new Label(&LCD, 2, 2, "Settings", SmallFont);
+
+    frmSettings = new Frame(&LCD);
+    frmSettings->add(btnSettings);
+
+
+    pnlSettingsHeader = new Panel(&LCD, 0, 0, LCD.getDisplayXSize() - 1, 20);
+    pnlSettingsHeader->setBorder(false, true, false, false);
+    pnlClockSettings = new Panel(&LCD, 0, pnlSettingsHeader->getHeight() + 1, 150, LCD.getDisplayYSize() - 1 - pnlSettingsHeader->getHeight() - 16);
+    pnlClockSettings->setBorder(false, false, false, true);
+
+    lblClockSettings = new Label(&LCD, HorizontalAlignment::Center, VerticalAlignment::Center, rtc.getTimeStr(), BigFont);
+
+    lblClockSettings = new Label(&LCD, HorizontalAlignment::Center, VerticalAlignment::Center, rtc.getTimeStr(), BigFont);
+    lblDateSettings = new Label(&LCD, HorizontalAlignment::Center, VerticalAlignment::Center, rtc.getDateStr(), BigFont);
+    pnlDateDowSettings->setBorder(false);
+    pnlBtnSettings = new Panel(&LCD, pnlClockSettings->getWidth(), pnlDateDowSettings->getY() + pnlDateDowSettings->getHeight(), pnlDateDowSettings->getX() + pnlDateDowSettings->getWidth(), LCD.getDisplayXSize() - 1 - pnlClockSettings->getWidth());
+    pnlDateDowSettings = new Panel(&LCD, pnlClockSettings->getWidth() + 1, pnlSettingsHeader->getHeight() + 1, LCD.getDisplayXSize() - 1 - pnlClockSettings->getWidth(), LCD.getDisplayYSize() - pnlSettingsHeader->getWidth() - 2 - 16);
+    pnlClockSettings->add(lblClockSettings);
+    // pnlBtnSettings->add(btnSettings);
+    // frmSettings->add(pnlBtnSettings);
+    frmSettings->add(pnlSettingsHeader);
+    frmSettings->add(pnlClockSettings);
+    frmSettings->add(pnlDateDowSettings);
+
+    pnlSettingsHeader->add(lblSettingsHeader);
 }
 
 void setup()
@@ -72,49 +147,40 @@ void setup()
     pinMode(LM35, INPUT);
     pinMode(SPEAKER, OUTPUT);
 
-    lblClock = new Label(&LCD, CENTER, (LCD.getDisplayYSize() - 50) / 2, rtc.getTimeStr(), SevenSegNumFontPlus);
-    lblDow = new Label(&LCD, LEFT, 2, rtc.getDOWStr(), SmallFont);
-    lblDate = new Label(&LCD, LEFT, 15, rtc.getDateStr(), SmallFont);
-    lblTemp = new Label(&LCD, RIGHT, 2, String(getTemp()) + " C", SmallFont);
-    btnSettings = new Button(&LCD, &Touch, LCD.getDisplayXSize() - 16, LCD.getDisplayYSize() - 16, 15, 15);
-    btnSettings->setFont(SmallFont);
-    btnSettings->setText("s");
-
-    frmMain = new Frame(&LCD, VGA_TRANSPARENT);
-    frmMain->add(lblClock);
-    frmMain->add(lblDow);
-    frmMain->add(lblDate);
-    frmMain->add(lblTemp);
-    frmMain->add(btnSettings);
-
-    lblSettingsHeader = new Label(&LCD, 2, 2, "Settings", SmallFont);
-    frmSettings = new Frame(&LCD, VGA_TRANSPARENT);
-    frmSettings->add(lblSettingsHeader);
-    frmSettings->add(btnSettings);
+    loadMainScreen();
+    // loadSettingsScreen();
 
     btnSettings->setNormalPressAction(&switchFrame);
+    btnSettings->setTextHighlight(true);
 
     currentFrame = frmMain;
 
-    alarm1 = new Alarm(12, 4);
+    // alarm1 = new Alarm(12, 4);
 }
 
 void loop()
 {
-    if(time != rtc.getTime())
+    if (time != rtc.getTime())
     {
-        lblClock->setText(rtc.getTimeStr());
-        lblDow->setText(rtc.getDOWStr());
-        lblDate->setText(rtc.getDateStr());
-        lblTemp->setText(String(getTemp()) + " C");
         currentFrame->draw();
-        LCD.drawCircle(307,4,2);
+        if (currentFrame == frmMain)
+        {
+            lblClock->setText(rtc.getTimeStr());
+            lblDow->setText(rtc.getDOWStr());
+            lblDate->setText(rtc.getDateStr());
+            lblTemp->setText(String(getTemp()) + " C");
+
+            LCD.drawCircle(307, 4, 2);
+        }
+        else
+        {
+            lblClockSettings->setText(rtc.getTimeStr());
+        }
+
         time = rtc.getTime();
-        if(alarm1->check(time))
-            alarm1->ring();
     }
 
-    if(Touch.dataAvailable())
+    if (Touch.dataAvailable())
     {
         Touch.read();
         int x = Touch.getX();

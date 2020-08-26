@@ -17,3 +17,8 @@ void Shape::draw()
     for(uint16_t i = 0; i < nSegments; i++)
         segments[i].draw(LCD, color);
 }
+
+void Shape::setColor(word color) 
+{
+    this->color = color;
+}

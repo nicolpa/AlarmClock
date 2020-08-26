@@ -11,6 +11,13 @@ Container::~Container()
     removeAll();
 }
 
+void Container::clear() 
+{
+    Component::clear();
+    for(int i = 0; i < nComponents; i++)
+        components[i]->invalidate();
+}
+
 int Container::getComponentsCount() 
 {
     return nComponents;
@@ -34,6 +41,7 @@ void Container::add(Component* component)
     {
         components[nComponents++] = component;
         component->setParent(this);
+        component->updateLayout();
     }
 }
 
@@ -42,6 +50,9 @@ void Container::add(Component* component, uint16_t index)
     if(nComponents == N_MAX_COMPONENTS)
         return;
     
+    component->setParent(this);
+    component->updateLayout();
+
     if(nComponents == index)
         components[index] = component;
     else if(nComponents < index)
@@ -62,7 +73,9 @@ void Container::remove(uint16_t index)
     if(index < 0 || index >= nComponents)
         return;
     
-    delete components[index];
+    components[index]->setParent(nullptr);
+    components[index]->updateLayout();
+
     if(index != nComponents - 1)
         for(uint16_t i = index; i < nComponents; i++)
             components[i] = components[i + 1];
@@ -101,4 +114,16 @@ bool Container::onClick(uint16_t x, uint16_t y)
             return true;
 
     return contains(x, y);
+}
+
+void Container::validate() 
+{
+    for(int i = 0; i < nComponents; i++)
+        components[i]->validate();
+}
+
+void Container::invalidate() 
+{
+    for(int i = 0; i < nComponents; i++)
+        components[i]->invalidate();
 }

@@ -1,15 +1,36 @@
 #include "CheckBox.hpp"
 
-CheckBox::CheckBox(lcd::UTFT* LCD, URTouch* Touch, uint16_t x, uint16_t y, String label, uint8_t* font, word color, uint32_t backcolor)
-    : ToggleButton(LCD, Touch, x, y, label, font, color, backcolor)
+CheckBox::CheckBox(lcd::UTFT* LCD, URTouch* Touch, uint16_t x, uint16_t y, String label, uint8_t* font)
+    : ToggleButton(LCD, Touch, x, y, label, font)
 {
 
+}
+
+CheckBox::CheckBox(lcd::UTFT* LCD, URTouch* Touch, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, String label, uint8_t* font) 
+    : ToggleButton(LCD, Touch, horizontalAlignment, verticalAlignment, label, font)
+{
+    
+}
+
+CheckBox::CheckBox(lcd::UTFT* LCD, URTouch* Touch, uint16_t x, VerticalAlignment verticalAlignment, String label, uint8_t* font) 
+    : ToggleButton(LCD, Touch, x, verticalAlignment, label, font)
+{
+    
+}
+
+CheckBox::CheckBox(lcd::UTFT* LCD, URTouch* Touch, HorizontalAlignment horizontalAlignment, uint16_t y, String label, uint8_t* font) 
+    : ToggleButton(LCD, Touch, horizontalAlignment, y, label, font)
+{
+    
 }
 
 CheckBox::~CheckBox() {}
 
 void CheckBox::draw() 
 {
+    if(valid)
+        return;
+    
     LCD->setFont(font);
     LCD->setColor(foreground);
     LCD->setBackColor(background);
@@ -19,6 +40,7 @@ void CheckBox::draw()
     LCD->drawRect(getX(), getY(), getX() + 15, getY() + 15);
 
     update();
+    valid = true;
 }
 
 void CheckBox::update() 

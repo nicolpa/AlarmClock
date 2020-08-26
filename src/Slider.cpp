@@ -1,7 +1,7 @@
 #include "Slider.hpp"
 
-Slider::Slider(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t length, Orientation orientation, word color, word fillColor, uint32_t backcolor)
-    : Component(LCD, Touch, x, y, 0, 0, color, backcolor), fillColor(fillColor), orientation(orientation)
+Slider::Slider(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t length, Orientation orientation)
+    : Component(LCD, Touch, x, y, 0, 0), fillColor(fillColor), orientation(orientation)
 {
     clickable = true;
 
@@ -132,14 +132,6 @@ bool Slider::onClick(uint16_t x, uint16_t y)
                 }
             }
         }
-
-        // if (Touch->getElapsedTime() > 750)
-        // {
-        //     Serial.println("LongPress");
-        // }
-        // Touch->resetStartPressTime();
-
-
         return true;
     }
 

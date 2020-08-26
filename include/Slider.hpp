@@ -16,7 +16,7 @@ class Slider : public Component
 private:
     /* data */
 public:
-    Slider(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t length, Orientation orientation = Orientation::HORIZONTAL, word color = VGA_WHITE, word fillColor = VGA_GREEN, uint32_t backcolor = VGA_BLACK);
+    Slider(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t length, Orientation orientation = Orientation::HORIZONTAL);
     ~Slider();
 
     void draw() override;

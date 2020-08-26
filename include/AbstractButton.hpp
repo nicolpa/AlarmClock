@@ -6,7 +6,11 @@ class AbstractButton : public Component
 {
 
 public:
-    AbstractButton(lcd::UTFT* LCD, URTouch* Touch, uint16_t x, uint16_t y, uint16_t w, uint16_t h, word color = VGA_WHITE, uint32_t backcolor = VGA_BLACK);
+    AbstractButton(lcd::UTFT* LCD, URTouch* Touch, uint16_t x, uint16_t y, uint16_t width, uint16_t height);
+    AbstractButton(lcd::UTFT* LCD, URTouch* Touch, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height);
+    AbstractButton(lcd::UTFT* LCD, URTouch* Touch, uint16_t x, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height);
+    AbstractButton(lcd::UTFT* LCD, URTouch* Touch, HorizontalAlignment horizontalAlignment, uint16_t y, uint16_t width, uint16_t height);
+    
     ~AbstractButton();
 
     /**

@@ -9,15 +9,36 @@ extern uint8_t SmallFont[], BigFont[], SevenSegNumFontPlus[];
 
 class Container;
 
+enum class HorizontalAlignment
+{
+    Left,
+    Right,
+    Center,
+    None
+};
+
+enum class VerticalAlignment
+{
+    Up,
+    Down,
+    Center,
+    None
+};
+
 class Component
 {
 
 public:
-    Component(lcd::UTFT *LCD, uint16_t x, uint16_t y, uint16_t width, uint16_t height,
-              word foreground = VGA_WHITE, uint32_t background = VGA_BLACK, word disableForeground = VGA_GRAY, uint32_t disableBackground = VGA_GRAY);
-    Component(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t width, uint16_t height,
-              word foreground = VGA_WHITE, uint32_t background = VGA_BLACK, word disableForeground = VGA_GRAY, uint32_t disableBackground = VGA_GRAY);
-    
+    Component(lcd::UTFT *LCD, uint16_t x, uint16_t y, uint16_t width, uint16_t height);
+    Component(lcd::UTFT *LCD, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height);
+    Component(lcd::UTFT *LCD, uint16_t x, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height);
+    Component(lcd::UTFT *LCD, HorizontalAlignment horizontalAlignment, uint16_t y, uint16_t width, uint16_t height);
+
+    Component(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t width, uint16_t height);
+    Component(lcd::UTFT *LCD, URTouch *Touch, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height);
+    Component(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height);
+    Component(lcd::UTFT *LCD, URTouch *Touch, HorizontalAlignment horizontalAlignment, uint16_t y, uint16_t width, uint16_t height);
+
     virtual ~Component();
 
     /**
@@ -28,7 +49,7 @@ public:
     /**
      * Clear the component from the display
      */
-    void clear();
+    virtual void clear();
 
     /**
      * Return true if the component is clicked
@@ -182,6 +203,24 @@ public:
 
     void removeLongPressAction();
 
+    void setHorizontalAlignment(HorizontalAlignment horizontalAlignment);
+
+    void setVerticalAlignment(VerticalAlignment verticalAlignment);
+
+    HorizontalAlignment getHorizontalAlignment();
+    VerticalAlignment getVerticalAlignment();
+
+    virtual void updateLayout();
+
+    void setForeground(word foreground);
+    void setBackground(word background);
+    void setDisableForeground(word disableForeground);
+    void setDisableBackground(word disableForeground);
+
+    virtual void validate();
+    virtual void invalidate();
+
+
 protected:
     lcd::UTFT *LCD;
     URTouch *Touch = nullptr;
@@ -206,42 +245,42 @@ protected:
     /**
      * The x position of the component in the parent's coordinate system
      */
-    uint16_t x;
+    uint16_t x = 0;
 
     /**
      * The y position of the component in the parent's coordinate system
      */
-    uint16_t y;
+    uint16_t y = 0;
 
     /**
      * The component width
      */
-    uint16_t width;
+    uint16_t width = 0;
 
     /**
      * The component height
      */
-    uint16_t height;
+    uint16_t height = 0;
 
     /**
      * The foreground color of the component
      */
-    word foreground;
+    word foreground = VGA_WHITE;
 
     /**
      * The backgroundColor of the component
      */
-    uint32_t background;
+    word background = VGA_BLACK;
 
     /**
      * The foreground color of the component when disabled
      */
-    word disableForeground;
+    word disableForeground = VGA_GRAY;
 
     /**
      * The backgroundColor of the component when disabled
      */
-    uint32_t disableBackground;
+    word disableBackground = VGA_BLACK;
 
     /**
      * The default font used in the component
@@ -253,6 +292,10 @@ protected:
      * Whether or not the component has focus
      */
     bool focus = false;
+
+    HorizontalAlignment horizontalAlignment;
+
+    VerticalAlignment verticalAlignment;
 
     /**
      * Function to execute when the component is pressed
@@ -272,4 +315,9 @@ protected:
      * @return true if the point is within this component
      */
     bool contains(uint16_t x, uint16_t y, uint16_t hitboxOffset = 0);
+
+    /**
+     * True if the component is valid. This is set to false when any ajustement was made to the component
+     */
+    bool valid = false;
 };

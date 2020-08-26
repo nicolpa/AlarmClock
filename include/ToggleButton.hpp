@@ -6,7 +6,10 @@ class ToggleButton : public AbstractButton
 {
 
 public:
-    ToggleButton(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, String label, uint8_t *font, word color = VGA_WHITE, uint32_t backcolor = VGA_BLACK);
+    ToggleButton(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, String label, uint8_t *font);
+    ToggleButton(lcd::UTFT *LCD, URTouch *Touch, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, String label, uint8_t *font);
+    ToggleButton(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, VerticalAlignment verticalAlignment, String label, uint8_t *font);
+    ToggleButton(lcd::UTFT *LCD, URTouch *Touch, HorizontalAlignment horizontalAlignment, uint16_t y, String label, uint8_t *font);
     virtual ~ToggleButton();
 
     bool onClick(uint16_t x, uint16_t y) override;

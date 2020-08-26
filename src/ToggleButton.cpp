@@ -1,7 +1,7 @@
 #include "ToggleButton.hpp"
 
-ToggleButton::ToggleButton(lcd::UTFT* LCD, URTouch* Touch, uint16_t x, uint16_t y, String label, uint8_t* font, word color, uint32_t backcolor)
-    : AbstractButton(LCD, Touch, x, y, 0, 0, color, backcolor)
+ToggleButton::ToggleButton(lcd::UTFT* LCD, URTouch* Touch, uint16_t x, uint16_t y, String label, uint8_t* font)
+    : AbstractButton(LCD, Touch, x, y, 0, 0)
 {
     clickable = true;
 
@@ -11,6 +11,53 @@ ToggleButton::ToggleButton(lcd::UTFT* LCD, URTouch* Touch, uint16_t x, uint16_t 
 
     this->font = font;
     text = label;
+
+    updateLayout();
+}
+
+ToggleButton::ToggleButton(lcd::UTFT *LCD, URTouch *Touch, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, String label, uint8_t *font) 
+    : AbstractButton(LCD, Touch, horizontalAlignment, verticalAlignment, 0, 0)
+{
+    clickable = true;
+
+    LCD->setFont(font);
+    width  = 20 + (LCD->getFontXsize() * String(label).length());
+    height = (LCD->getFontYsize() < 15) ? 15 : LCD->getFontYsize();
+
+    this->font = font;
+    text = label;
+
+    updateLayout();
+}
+
+ToggleButton::ToggleButton(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, VerticalAlignment verticalAlignment, String label, uint8_t *font) 
+    : AbstractButton(LCD, Touch, x, verticalAlignment, 0, 0)
+{
+    clickable = true;
+
+    LCD->setFont(font);
+    width  = 20 + (LCD->getFontXsize() * String(label).length());
+    height = (LCD->getFontYsize() < 15) ? 15 : LCD->getFontYsize();
+
+    this->font = font;
+    text = label;
+
+    updateLayout();
+}
+
+ToggleButton::ToggleButton(lcd::UTFT *LCD, URTouch *Touch,HorizontalAlignment horizontalAlignment, uint16_t y, String label, uint8_t *font) 
+    : AbstractButton(LCD, Touch, horizontalAlignment, y, 0, 0)
+{
+    clickable = true;
+
+    LCD->setFont(font);
+    width  = 20 + (LCD->getFontXsize() * String(label).length());
+    height = (LCD->getFontYsize() < 15) ? 15 : LCD->getFontYsize();
+
+    this->font = font;
+    text = label;
+
+    updateLayout();
 }
 
 ToggleButton::~ToggleButton() {}

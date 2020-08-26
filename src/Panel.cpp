@@ -12,6 +12,8 @@ Panel::~Panel()
 
 void Panel::draw()
 {
+    if(valid)
+        return;
     if(!visible) return;
 
 

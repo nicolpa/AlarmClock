@@ -1,8 +1,26 @@
 #include "RadioButton.hpp"
 
-RadioButton::RadioButton(lcd::UTFT* LCD, URTouch* Touch, uint16_t x, uint16_t y, String label, uint8_t* font, word color, uint32_t backcolor) 
-    : ToggleButton(LCD, Touch, x, y, label, font, color, backcolor)
+RadioButton::RadioButton(lcd::UTFT* LCD, URTouch* Touch, uint16_t x, uint16_t y, String label, uint8_t* font) 
+    : ToggleButton(LCD, Touch, x, y, label, font)
 {
+}
+
+RadioButton::RadioButton(lcd::UTFT* LCD, URTouch* Touch, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, String label, uint8_t* font) 
+    : ToggleButton(LCD, Touch, horizontalAlignment, verticalAlignment, label, font)
+{
+    
+}
+
+RadioButton::RadioButton(lcd::UTFT* LCD, URTouch* Touch, uint16_t x, VerticalAlignment verticalAlignment, String label, uint8_t* font) 
+    : ToggleButton(LCD, Touch, x, verticalAlignment, label, font)
+{
+    
+}
+
+RadioButton::RadioButton(lcd::UTFT* LCD, URTouch* Touch, HorizontalAlignment horizontalAlignment, uint16_t y, String label, uint8_t* font) 
+    : ToggleButton(LCD, Touch, horizontalAlignment, y, label, font)
+{
+    
 }
 
 RadioButton::~RadioButton() {}

@@ -2,13 +2,14 @@
 
 #include "ToggleButton.hpp"
 
-// class ToggleButtonHolder;
-
 class CheckBox : public ToggleButton
 {
 
 public:
-    CheckBox(lcd::UTFT* LCD, URTouch* Touch, uint16_t x, uint16_t y, String label, uint8_t* font, word color = VGA_WHITE, uint32_t backcolor = VGA_BLACK);
+    CheckBox(lcd::UTFT* LCD, URTouch* Touch, uint16_t x, uint16_t y, String label, uint8_t* font);
+    CheckBox(lcd::UTFT* LCD, URTouch* Touch, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, String label, uint8_t* font);
+    CheckBox(lcd::UTFT* LCD, URTouch* Touch, uint16_t x, VerticalAlignment verticalAlignment, String label, uint8_t* font);
+    CheckBox(lcd::UTFT* LCD, URTouch* Touch, HorizontalAlignment horizontalAlignment, uint16_t y, String label, uint8_t* font);
     ~CheckBox();
 
     void draw() override;

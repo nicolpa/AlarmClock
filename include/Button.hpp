@@ -7,9 +7,22 @@ class Button : public AbstractButton
 {
 
 public:
-    Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t w, uint16_t h, word pressedColor = VGA_GREEN, word color = VGA_WHITE, uint32_t backcolor = VGA_BLACK);
-    Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t w, uint16_t h, String text, uint8_t *font, word pressedColor = VGA_GREEN, word color = VGA_WHITE, uint32_t backcolor = VGA_BLACK);
-    Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t w, uint16_t h, Shape *shape, word pressedColor = VGA_GREEN, word color = VGA_WHITE, uint32_t backcolor = VGA_BLACK);
+    Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t width, uint16_t height);
+    Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t width, uint16_t height, String text, uint8_t *font);
+    Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t width, uint16_t height, Shape *shape);
+
+    Button(lcd::UTFT *LCD, URTouch *Touch, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height);
+    Button(lcd::UTFT *LCD, URTouch *Touch, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height, String text, uint8_t *font);
+    Button(lcd::UTFT *LCD, URTouch *Touch, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height, Shape *shape);
+
+    Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height);
+    Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height, String text, uint8_t *font);
+    Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height, Shape *shape);
+
+    Button(lcd::UTFT *LCD, URTouch *Touch, HorizontalAlignment horizontalAlignment, uint16_t y, uint16_t width, uint16_t height);
+    Button(lcd::UTFT *LCD, URTouch *Touch, HorizontalAlignment horizontalAlignment, uint16_t y, uint16_t width, uint16_t height, String text, uint8_t *font);
+    Button(lcd::UTFT *LCD, URTouch *Touch, HorizontalAlignment horizontalAlignment, uint16_t y, uint16_t width, uint16_t height, Shape *shape);
+
     ~Button();
 
     /**
@@ -24,17 +37,21 @@ public:
      */
     bool getBorderless();
 
+    bool getTextHighlight();
+
     void draw() override;
 
     bool onClick(uint16_t x, uint16_t y) override;
 
     void setShape(Shape *shape);
 
+    void setTextHighlight(bool textHightlight);
+
 private:
     /**
      * The outline color used when the button is pressed
      */
-    word pressedColor;
+    word pressedColor = VGA_GREEN;
 
     /**
      * Whether or not the button display a border

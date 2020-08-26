@@ -1,20 +1,77 @@
 #include "Button.hpp"
 
-Button::Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t w, uint16_t h, word pressedColor, word color, uint32_t backcolor)
-    : AbstractButton(LCD, Touch, x, y, w, h, color, backcolor), pressedColor(pressedColor)
+Button::Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t width, uint16_t height) 
+    : AbstractButton(LCD, Touch, x, y, width, height)
 {
-    clickable = true;
+
 }
 
-Button::Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t w, uint16_t h, String text, uint8_t *font, word pressedColor, word color, uint32_t backcolor) 
-    : AbstractButton(LCD, Touch, x, y, w, h, color, backcolor), pressedColor(pressedColor)
+Button::Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t width, uint16_t height, String text, uint8_t *font) 
+    : AbstractButton(LCD, Touch, horizontalAlignment, verticalAlignment, width, height)
 {
-    setText(text);
-    setFont(font);
+    this->text = text;
+    this->font = font;
 }
 
-Button::Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t w, uint16_t h, Shape *shape, word pressedColor, word color, uint32_t backcolor) 
-    : AbstractButton(LCD, Touch, x, y, w, h, color, backcolor), pressedColor(pressedColor), shape(shape)
+Button::Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t width, uint16_t height, Shape *shape)
+    : AbstractButton(LCD, Touch, x, y, width, height), shape(shape)
+{
+    
+}
+
+Button::Button(lcd::UTFT *LCD, URTouch *Touch, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height)
+    : AbstractButton(LCD, Touch, horizontalAlignment, verticalAlignment, width, height)
+{
+    
+}
+
+Button::Button(lcd::UTFT *LCD, URTouch *Touch, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height, String text, uint8_t *font)
+    : AbstractButton(LCD, Touch, horizontalAlignment, verticalAlignment, width, height)
+{
+    this->text = text;
+    this->font = font;
+}
+
+Button::Button(lcd::UTFT *LCD, URTouch *Touch, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height, Shape *shape) 
+    : AbstractButton(LCD, Touch, horizontalAlignment, verticalAlignment, width, height), shape(shape)
+{
+    
+}
+
+Button::Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height)
+    : AbstractButton(LCD, Touch, x, verticalAlignment, width, height)
+{
+    
+}
+
+Button::Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height, String text, uint8_t *font)
+    : AbstractButton(LCD, Touch, x, verticalAlignment, width, height)
+{
+    this->text = text;
+    this->font = font;
+}
+
+Button::Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height, Shape *shape)
+    : AbstractButton(LCD, Touch, x, verticalAlignment, width, height), shape(shape)
+{
+    
+}
+
+Button::Button(lcd::UTFT *LCD, URTouch *Touch, HorizontalAlignment horizontalAlignment, uint16_t y, uint16_t width, uint16_t height)
+    : AbstractButton(LCD, Touch, horizontalAlignment, y, width, height)
+{
+    
+}
+
+Button::Button(lcd::UTFT *LCD, URTouch *Touch, HorizontalAlignment horizontalAlignment, uint16_t y, uint16_t width, uint16_t height, String text, uint8_t *font)
+    : AbstractButton(LCD, Touch, horizontalAlignment, y, width, height)
+{
+    this->text = text;
+    this->font = font;
+}
+
+Button::Button(lcd::UTFT *LCD, URTouch *Touch, HorizontalAlignment horizontalAlignment, uint16_t y, uint16_t width, uint16_t height, Shape *shape)
+    : AbstractButton(LCD, Touch, horizontalAlignment, y, width, height), shape(shape)
 {
     
 }
@@ -33,8 +90,16 @@ bool Button::getBorderless()
     return borderless;
 }
 
+bool Button::getTextHighlight() 
+{
+    return textHighlight;
+}
+
 void Button::draw()
 {
+    if(valid)
+        return;
+    
     if (!enable)
         LCD->setColor(VGA_GRAY);
     if (!borderless)
@@ -57,6 +122,8 @@ void Button::draw()
         LCD->print(text, x, y);
     else if(shape != nullptr)
         shape->draw();
+
+    valid = true;
 }
 
 bool Button::onClick(uint16_t x, uint16_t y)
@@ -64,6 +131,7 @@ bool Button::onClick(uint16_t x, uint16_t y)
     if (enable && contains(x, y))
     {
         pressed = true;
+        shape->setColor(pressedColor);
         draw();
 
         Touch->saveStartPressTime();
@@ -81,6 +149,7 @@ bool Button::onClick(uint16_t x, uint16_t y)
         Touch->resetStartPressTime();
 
         pressed = false;
+        shape->setColor(foreground);
         draw();
 
         return true;
@@ -92,4 +161,9 @@ bool Button::onClick(uint16_t x, uint16_t y)
 void Button::setShape(Shape *shape) 
 {
     this->shape = shape;
+}
+
+void Button::setTextHighlight(bool textHightlight) 
+{
+    this->textHighlight = textHighlight;
 }
