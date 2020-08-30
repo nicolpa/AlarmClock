@@ -1,6 +1,7 @@
 #include "RadioButtonHolder.hpp"
 
 RadioButtonHolder::RadioButtonHolder()
+    : ToggleButtonHolder()
 {
 }
 
@@ -10,11 +11,11 @@ RadioButtonHolder::~RadioButtonHolder()
 
 bool RadioButtonHolder::onClick(uint16_t x, uint16_t y)
 {
-    for(uint16_t i = 0; i < nComponents; i++)
+    for(int i = 0; i < components->size(); i++)
     {
         if(getComponent(i)->onClick(x, y))
         {
-            for(uint16_t j = 0; j < nComponents; j++)
+            for(int j = 0; j < components->size(); j++)
             {
                 if(i != j)
                 {

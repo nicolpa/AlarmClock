@@ -3,6 +3,8 @@
 #include "Button.hpp"
 #include "Label.hpp"
 #include "Panel.hpp"
+#include "GraphicalComponentContainer.hpp"
+#include "Shapes.hpp"
 
 #define UNLOCK 0
 #define TEMP_LOCK 1
@@ -55,45 +57,14 @@ private:
     char keysSpe2[14] = { '$', '~', '[', ']', '{', '}', '<', '>', '^', 
                           '`', ';', '\\', '|', 'x'};
 
-    Segment segEnter[5] = {{285, 212, 293, 207},
-                           {285, 212, 293, 217},
-                           {293, 207, 293, 217},
-                           {293, 212, 298, 212},
-                           {298, 212, 298, 207}};
-
-    Segment segCapsUnlock[7] = {{22, 183, 30, 175},
-                                {38, 183, 30, 175},
-                                {22, 183, 27, 183},
-                                {38, 183, 33, 183},
-                                {27, 183, 27, 190},
-                                {33, 183, 33, 190},
-                                {27, 190, 33, 190}};
-
-    Segment segCapsTempLock[8] = {{22, 183, 30, 175},
-                                  {38, 183, 30, 175},
-                                  {22, 183, 27, 183},
-                                  {38, 183, 33, 183},
-                                  {27, 183, 27, 185},
-                                  {33, 183, 33, 185},
-                                  {27, 185, 33, 185},
-                                  {27, 187, 33, 190, true}};
-
-    Segment segCapsHardLock[8] = {{22, 183, 30, 175},
-                                  {38, 183, 30, 175},
-                                  {22, 183, 27, 183},
-                                  {38, 183, 33, 183},
-                                  {27, 183, 27, 185},
-                                  {33, 183, 33, 185},
-                                  {27, 185, 33, 185},
-                                  {27, 187, 33, 190, true, true}};
-
+    
     uint8_t CapsLock = UNLOCK;
 
     uint8_t keyboardPage = MAIN;
     
-    Shape *shapeCapsUnlock;
-    Shape *shapeCapsTempLock;
-    Shape *shapeCapsHardLock;
-    Shape *shapeEnter;
+    GraphicalComponentContainer *shapeCapsUnlock;
+    GraphicalComponentContainer *shapeCapsTempLock;
+    GraphicalComponentContainer *shapeCapsHardLock;
+    GraphicalComponentContainer *shapeEnter;
 
 };

@@ -1,9 +1,26 @@
 #include "Panel.hpp"
 
-Panel::Panel(lcd::UTFT *LCD, uint16_t x, uint16_t y, uint16_t w, uint16_t h, word color, uint32_t backcolor, word borderColor)
-    : Container(x, y, w, h), borderColor(borderColor)
+Panel::Panel(lcd::UTFT *LCD, uint16_t x, uint16_t y, uint16_t width, uint16_t height, word borderColor)
+    : Container(LCD, x, y, width, height), borderColor(borderColor)
 {
-    this->LCD = LCD;
+}
+
+Panel::Panel(lcd::UTFT* LCD, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height, word borderColor) 
+    : Container(LCD, horizontalAlignment, verticalAlignment, width, height)
+{
+    
+}
+
+Panel::Panel(lcd::UTFT* LCD, uint16_t x, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height, word borderColor) 
+    : Container(LCD, x, verticalAlignment, width, height)
+{
+    
+}
+
+Panel::Panel(lcd::UTFT* LCD, HorizontalAlignment horizontalAlignment, uint16_t y, uint16_t width, uint16_t height, word borderColor) 
+    : Container(LCD, horizontalAlignment, y, width, height)
+{
+    
 }
 
 Panel::~Panel()
@@ -16,14 +33,17 @@ void Panel::draw()
         return;
     if(!visible) return;
 
-
-    LCD->setColor(background);
-    LCD->fillRect(getX(), getY(), getX() + width, getY() + height);
+    if(!transparent)
+    {
+        LCD->setColor((enable) ? background : disableBackground);
+        LCD->fillRect(getX() + (borderLeft) ? 1 : 0, getY() + (borderTop) ? 1 : 0, 
+                      getX() + getWidth() - (borderRight) ? 1 : 0, getY() + getHeight() - (borderBottom) ? 1 : 0);
+    }
     
     int centerX;
     int centerY;
 
-    LCD->setColor(borderColor);
+    LCD->setColor((enable) ? foreground : disableBackground);
     if (borderTop)
         LCD->drawHLine(getX(), getY(), getWidth());
     if (borderBottom)
@@ -32,15 +52,6 @@ void Panel::draw()
         LCD->drawVLine(getX(), getY(), getHeight());
     if (borderRight)
         LCD->drawVLine(getX() + getWidth(), getY(), getHeight());
-
-    centerX = getX() + (getWidth() / 2);
-    centerY = getY() + (getHeight() / 2);
-
-    LCD->setColor(VGA_GREEN);
-    LCD->drawVLine(centerX, centerY - 5, 10);
-
-    LCD->setColor(VGA_RED);
-    LCD->drawHLine(centerX - 5, centerY, 10);
     
     Container::draw();
 }

@@ -1,14 +1,16 @@
 #pragma once
 
 #include "Component.hpp"
-
-#define N_MAX_COMPONENTS 10
+#include "LinkedPointerList.h"
 
 class Container : public Component
 {
 
 public:
-    Container(uint16_t x, uint16_t y, uint16_t width, uint16_t height);
+    Container(lcd::UTFT *LCD, uint16_t x, uint16_t y, uint16_t width, uint16_t height);
+    Container(lcd::UTFT *LCD, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height);
+    Container(lcd::UTFT *LCD, uint16_t x, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height);
+    Container(lcd::UTFT *LCD, HorizontalAlignment horizontalAlignment, uint16_t y, uint16_t width, uint16_t height);
     virtual ~Container();
 
     void clear() override;
@@ -68,17 +70,9 @@ public:
 
     virtual bool onClick(uint16_t x, uint16_t y);
 
-    void validate() override;
-    void invalidate() override;
+    void updateLayout() override;
 
 protected:
-    /**
-     * The number of components in this container
-     */ 
-    uint16_t nComponents = 0;
-
-    /**
-     * The array for the components of this container
-     */
-    Component* components[N_MAX_COMPONENTS];
+    LinkedPointerList<Component> *components;
+    
 };

@@ -116,6 +116,8 @@ public:
      */
     uint8_t *getFont();
 
+    bool isTransparent();
+
     /**
      * Set the parent of the component
      * @param parent The new parent of the component
@@ -212,13 +214,16 @@ public:
 
     virtual void updateLayout();
 
-    void setForeground(word foreground);
-    void setBackground(word background);
-    void setDisableForeground(word disableForeground);
-    void setDisableBackground(word disableForeground);
+    virtual void setForeground(word foreground);
+    virtual void setBackground(word background);
+    virtual void setDisableForeground(word disableForeground);
+    virtual void setDisableBackground(word disableForeground);
+    void setTransparent(bool transparent);
 
     virtual void validate();
     virtual void invalidate();
+
+    void print();
 
 
 protected:
@@ -293,9 +298,9 @@ protected:
      */
     bool focus = false;
 
-    HorizontalAlignment horizontalAlignment;
+    HorizontalAlignment horizontalAlignment = HorizontalAlignment::None;
 
-    VerticalAlignment verticalAlignment;
+    VerticalAlignment verticalAlignment = VerticalAlignment::None;
 
     /**
      * Function to execute when the component is pressed
@@ -320,4 +325,6 @@ protected:
      * True if the component is valid. This is set to false when any ajustement was made to the component
      */
     bool valid = false;
+
+    bool transparent = false;
 };

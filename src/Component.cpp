@@ -133,6 +133,11 @@ uint8_t *Component::getFont()
     return font;
 }
 
+bool Component::isTransparent() 
+{
+    return transparent;
+}
+
 void Component::setParent(Container *parent)
 {
     this->parent = parent;
@@ -161,29 +166,29 @@ void Component::setEnable(bool enable)
 void Component::setX(uint16_t x)
 {
     this->x = x;
-
-    valid = false;
+    horizontalAlignment = HorizontalAlignment::None;
+    updateLayout();
 }
 
 void Component::setY(uint16_t y)
 {
     this->y = y;
-
-    valid = false;
+    verticalAlignment = VerticalAlignment::None;
+    updateLayout();
 }
 
 void Component::setWidth(uint16_t width)
 {
     this->width = width;
 
-    valid = false;
+    updateLayout();
 }
 
 void Component::setHeight(uint16_t height)
 {
     this->height = height;
 
-    valid = false;
+    updateLayout();
 }
 
 void Component::setLocation(uint16_t x, uint16_t y)
@@ -191,7 +196,10 @@ void Component::setLocation(uint16_t x, uint16_t y)
     this->x = x;
     this->y = y;
 
-    valid = false;
+    horizontalAlignment = HorizontalAlignment::None;
+    verticalAlignment = VerticalAlignment::None;
+
+    updateLayout();
 }
 
 void Component::setSize(uint16_t width, uint16_t height)
@@ -199,7 +207,7 @@ void Component::setSize(uint16_t width, uint16_t height)
     this->width = width;
     this->height = height;
 
-    valid = false;
+    updateLayout();
 }
 
 void Component::setBounds(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
@@ -209,7 +217,10 @@ void Component::setBounds(uint16_t x, uint16_t y, uint16_t width, uint16_t heigh
     this->width = width;
     this->height = height;
 
-    valid = false;
+    horizontalAlignment = HorizontalAlignment::None;
+    verticalAlignment = VerticalAlignment::None;
+
+    updateLayout();
 }
 
 void Component::setFont(uint8_t *font)
@@ -271,7 +282,15 @@ void Component::updateLayout()
         this->x = 0;
         break;
     case HorizontalAlignment::Right:
-        this->x = (parent == nullptr) ? LCD->getDisplayXSize() - width - 1: parent->getX() + parent->getWidth() - width;
+    // Serial.println("//===========================================------");
+    // if(parent != nullptr)
+    // {
+    //     Serial.println(String(parent->getX()));
+    //     Serial.println(String(parent->getWidth()));
+    //     Serial.println(String(width));
+    // }
+        this->x = (parent == nullptr) ? LCD->getDisplayXSize() - width - 1: parent->getX() + parent->getWidth() - width - 1;
+        Serial.println(String(x));
         break;
     case HorizontalAlignment::Center:
         this->x = (parent == nullptr) ? (LCD->getDisplayXSize() - width) / 2 : parent->getX() + ((parent->getWidth() - width) / 2);
@@ -287,7 +306,7 @@ void Component::updateLayout()
         this->y = 0;
         break;
     case VerticalAlignment::Down:
-        this->y = (parent == nullptr) ? LCD->getDisplayYSize() - height : parent->getY() + parent->getHeight() - height;
+        this->y = (parent == nullptr) ? LCD->getDisplayYSize() - height : parent->getY() + parent->getHeight() - height - 1;
         break;
     case VerticalAlignment::Center:
         this->y = (parent == nullptr) ? (LCD->getDisplayYSize() - height) / 2 : parent->getY() + ((parent->getHeight() - height) / 2);
@@ -306,31 +325,36 @@ void Component::updateLayout()
     if(getY() + height >= LCD->getDisplayYSize())
         this->height = LCD->getDisplayYSize() - getY() - 1;
 
-    valid = false;
+    invalidate();
 }
 
 void Component::setForeground(word foreground) 
 {
     this->foreground = foreground;
-    valid = false;
+    invalidate();
 }
 
 void Component::setBackground(word background) 
 {
     this->background = background;
-    valid = false;
+    invalidate();
 }
 
 void Component::setDisableForeground(word disableForeground) 
 {
     this->disableForeground = disableForeground;
-    valid = false;
+    invalidate();
 }
 
 void Component::setDisableBackground(word disableForeground) 
 {
     this->disableBackground = disableBackground;
-    valid = false;
+    invalidate();
+}
+
+void Component::setTransparent(bool transparent) 
+{
+    this->transparent = transparent;
 }
 
 void Component::validate() 
@@ -341,6 +365,14 @@ void Component::validate()
 void Component::invalidate() 
 {
     valid = false;
+    
+    if(parent != nullptr)
+        parent->invalidate();
+}
+
+void Component::print() 
+{
+    Serial.println("Yup");
 }
 
 bool Component::contains(uint16_t x, uint16_t y, uint16_t hitboxOffset = 0)

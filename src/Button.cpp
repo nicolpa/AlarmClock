@@ -13,8 +13,8 @@ Button::Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t 
     this->font = font;
 }
 
-Button::Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t width, uint16_t height, Shape *shape)
-    : AbstractButton(LCD, Touch, x, y, width, height), shape(shape)
+Button::Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t width, uint16_t height, GraphicalComponent *graphics)
+    : AbstractButton(LCD, Touch, x, y, width, height), graphics(graphics)
 {
     
 }
@@ -32,8 +32,8 @@ Button::Button(lcd::UTFT *LCD, URTouch *Touch, HorizontalAlignment horizontalAli
     this->font = font;
 }
 
-Button::Button(lcd::UTFT *LCD, URTouch *Touch, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height, Shape *shape) 
-    : AbstractButton(LCD, Touch, horizontalAlignment, verticalAlignment, width, height), shape(shape)
+Button::Button(lcd::UTFT *LCD, URTouch *Touch, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height, GraphicalComponent *graphics) 
+    : AbstractButton(LCD, Touch, horizontalAlignment, verticalAlignment, width, height), graphics(graphics)
 {
     
 }
@@ -51,8 +51,8 @@ Button::Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, VerticalAlignment ver
     this->font = font;
 }
 
-Button::Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height, Shape *shape)
-    : AbstractButton(LCD, Touch, x, verticalAlignment, width, height), shape(shape)
+Button::Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height, GraphicalComponent *graphics)
+    : AbstractButton(LCD, Touch, x, verticalAlignment, width, height), graphics(graphics)
 {
     
 }
@@ -70,8 +70,8 @@ Button::Button(lcd::UTFT *LCD, URTouch *Touch, HorizontalAlignment horizontalAli
     this->font = font;
 }
 
-Button::Button(lcd::UTFT *LCD, URTouch *Touch, HorizontalAlignment horizontalAlignment, uint16_t y, uint16_t width, uint16_t height, Shape *shape)
-    : AbstractButton(LCD, Touch, horizontalAlignment, y, width, height), shape(shape)
+Button::Button(lcd::UTFT *LCD, URTouch *Touch, HorizontalAlignment horizontalAlignment, uint16_t y, uint16_t width, uint16_t height, GraphicalComponent *graphics)
+    : AbstractButton(LCD, Touch, horizontalAlignment, y, width, height), graphics(graphics)
 {
     
 }
@@ -120,8 +120,8 @@ void Button::draw()
         LCD->setColor(foreground);
     if(text != "")
         LCD->print(text, x, y);
-    else if(shape != nullptr)
-        shape->draw();
+    else if(graphics != nullptr)
+        graphics->draw();
 
     valid = true;
 }
@@ -131,7 +131,7 @@ bool Button::onClick(uint16_t x, uint16_t y)
     if (enable && contains(x, y))
     {
         pressed = true;
-        shape->setColor(pressedColor);
+        graphics->setForeground(pressedColor);
         draw();
 
         Touch->saveStartPressTime();
@@ -149,7 +149,7 @@ bool Button::onClick(uint16_t x, uint16_t y)
         Touch->resetStartPressTime();
 
         pressed = false;
-        shape->setColor(foreground);
+        graphics->setForeground(foreground);
         draw();
 
         return true;
@@ -158,9 +158,9 @@ bool Button::onClick(uint16_t x, uint16_t y)
     return false;
 }
 
-void Button::setShape(Shape *shape) 
+void Button::setGraphics(GraphicalComponent *graphics) 
 {
-    this->shape = shape;
+    this->graphics = graphics;
 }
 
 void Button::setTextHighlight(bool textHightlight) 

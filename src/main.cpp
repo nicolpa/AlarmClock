@@ -1,5 +1,7 @@
 #include <Arduino.h>
 
+#include "LinkedPointerList.h"
+
 #include "UTFT.h"
 #include "URTouch.h"
 #include "DS1307.h"
@@ -15,7 +17,7 @@
 #include "RadioButtonHolder.hpp"
 #include "Frame.hpp"
 #include "VirtualKeyboard.hpp"
-#include "Shape.hpp"
+#include "Shapes.hpp"
 #include "TextArea.hpp"
 #include "Alarm.hpp"
 
@@ -42,15 +44,20 @@ Panel *pnlClockSettings;
 Panel *pnlDateDowSettings;
 Panel *pnlAlarmsSettings;
 Panel *pnlBtnSettings;
+Panel *pnlTemp;
 
-Shape *shapeBtnSettings;
+GraphicalComponentContainer *shapeBtnSettings;
 
 Button *btnHourUp, *btnMinUp, *btnSecUp, *btnDayUp, *btnMonthUp, *btnYearUp;
 Button *btnHourDown, *btnMinDown, *btnSecDown, *btnDayDown, *btnMonthDown, *btnYearDown;
 Label *lblClockSettings, *lblDateSettings;
+Circle *circTemp;
+Label *lblTempC;
 
 Alarm *Alarms[5];
 uint8_t nAlarm = 0;
+
+LinkedPointerList<Component>* frm;
 
 #define LM35 A5
 
@@ -68,48 +75,56 @@ void switchFrame()
         currentFrame = frmMain;
 }
 
+Panel *test;
+GraphicalComponentContainer *teste;
 void loadMainScreen()
 {
     lblClock = new Label(&LCD, HorizontalAlignment::Center, VerticalAlignment::Center, rtc.getTimeStr(), SevenSegNumFontPlus);
     // lblClock->draw();
     lblDow = new Label(&LCD, HorizontalAlignment::Left, 2, rtc.getDOWStr(), SmallFont);
     lblDate = new Label(&LCD, HorizontalAlignment::Left, 15, rtc.getDateStr(), SmallFont);
-    lblTemp = new Label(&LCD, HorizontalAlignment::Right, 2, String(getTemp()) + " C", SmallFont);
-
-    btnSettings = new Button(&LCD, &Touch, HorizontalAlignment::Right, VerticalAlignment::Down, 15, 15);
-
-    static Segment segBtnSettings[3] =
-        {
-            {btnSettings->getX() + 2, btnSettings->getY() + 3, btnSettings->getX() + btnSettings->getWidth() - 2, btnSettings->getY() + 4, true, true},
-            {btnSettings->getX() + 2, btnSettings->getY() + 7, btnSettings->getX() + btnSettings->getWidth() - 2, btnSettings->getY() + 8, true, true},
-            {btnSettings->getX() + 2, btnSettings->getY() + 11, btnSettings->getX() + btnSettings->getWidth() - 2, btnSettings->getY() + 12, true, true}
-        };
-
-    shapeBtnSettings = new Shape(&LCD, segBtnSettings, 3);
-
-    btnSettings->setShape(shapeBtnSettings);
-    btnSettings->setBorderless(true);
-
+    lblTemp = new Label(&LCD, HorizontalAlignment::Left, 2, String(getTemp()), SmallFont);
+    pnlTemp = new Panel(&LCD, HorizontalAlignment::Right, VerticalAlignment::Up, 56, 12);
+    pnlTemp->setBorder(false);
+    pnlTemp->add(lblTemp);
+    circTemp = new Circle(&LCD, 44, 4, 2);
+    pnlTemp->add(circTemp);
+    
+    lblTempC = new Label(&LCD, 311, 2, "C", SmallFont);
+    Serial.println("C : " + String(lblTempC->getX()));
+    pnlTemp->add(lblTempC);
+    
     frmMain = new Frame(&LCD);
     frmMain->add(lblClock);
     frmMain->add(lblDow);
     frmMain->add(lblDate);
-    frmMain->add(lblTemp);
+    frmMain->add(pnlTemp);
+    Serial.println("C : " + String(lblTempC->getX()));
+
+    // shapeBtnSettings = new GraphicalComponentContainer();
+    // shapeBtnSettings->getGraphics()->add(new Rectangle(&LCD, btnSettings->getX() + 2, btnSettings->getY() + 3, btnSettings->getX() + btnSettings->getWidth() - 2, btnSettings->getY() + 4, true));
+    // shapeBtnSettings->getGraphics()->add(new Rectangle(&LCD, btnSettings->getX() + 2, btnSettings->getY() + 7, btnSettings->getX() + btnSettings->getWidth() - 2, btnSettings->getY() + 8, true));
+    // shapeBtnSettings->getGraphics()->add(new Rectangle(&LCD, btnSettings->getX() + 2, btnSettings->getY() + 11, btnSettings->getX() + btnSettings->getWidth() - 2, btnSettings->getY() + 12, true));
+    // shapeBtnSettings->draw();
+
+    
+    Serial.println("Draw");
+    btnSettings = new Button(&LCD, &Touch, HorizontalAlignment::Right, VerticalAlignment::Down, 15, 15);
+    btnSettings->setBorderless(true);
     frmMain->add(btnSettings);
-    // frmMain->draw();
 }
 
 void loadSettingsScreen()
 {
     lblSettingsHeader = new Label(&LCD, 2, 2, "Settings", SmallFont);
 
-    frmSettings = new Frame(&LCD);
+    frmSettings = new Frame(&LCD, 10);
     frmSettings->add(btnSettings);
 
 
-    pnlSettingsHeader = new Panel(&LCD, 0, 0, LCD.getDisplayXSize() - 1, 20);
+    pnlSettingsHeader = new Panel(&LCD, 0, 0, LCD.getDisplayXSize() - 1, 20, 20);
     pnlSettingsHeader->setBorder(false, true, false, false);
-    pnlClockSettings = new Panel(&LCD, 0, pnlSettingsHeader->getHeight() + 1, 150, LCD.getDisplayYSize() - 1 - pnlSettingsHeader->getHeight() - 16);
+    pnlClockSettings = new Panel(&LCD, 0, pnlSettingsHeader->getHeight() + 1, 150, LCD.getDisplayYSize() - 1 - pnlSettingsHeader->getHeight() - 16, 10);
     pnlClockSettings->setBorder(false, false, false, true);
 
     lblClockSettings = new Label(&LCD, HorizontalAlignment::Center, VerticalAlignment::Center, rtc.getTimeStr(), BigFont);
@@ -117,8 +132,8 @@ void loadSettingsScreen()
     lblClockSettings = new Label(&LCD, HorizontalAlignment::Center, VerticalAlignment::Center, rtc.getTimeStr(), BigFont);
     lblDateSettings = new Label(&LCD, HorizontalAlignment::Center, VerticalAlignment::Center, rtc.getDateStr(), BigFont);
     pnlDateDowSettings->setBorder(false);
-    pnlBtnSettings = new Panel(&LCD, pnlClockSettings->getWidth(), pnlDateDowSettings->getY() + pnlDateDowSettings->getHeight(), pnlDateDowSettings->getX() + pnlDateDowSettings->getWidth(), LCD.getDisplayXSize() - 1 - pnlClockSettings->getWidth());
-    pnlDateDowSettings = new Panel(&LCD, pnlClockSettings->getWidth() + 1, pnlSettingsHeader->getHeight() + 1, LCD.getDisplayXSize() - 1 - pnlClockSettings->getWidth(), LCD.getDisplayYSize() - pnlSettingsHeader->getWidth() - 2 - 16);
+    pnlBtnSettings = new Panel(&LCD, pnlClockSettings->getWidth(), pnlDateDowSettings->getY() + pnlDateDowSettings->getHeight(), pnlDateDowSettings->getX() + pnlDateDowSettings->getWidth(), LCD.getDisplayXSize() - 1 - pnlClockSettings->getWidth(), 10);
+    pnlDateDowSettings = new Panel(&LCD, pnlClockSettings->getWidth() + 1, pnlSettingsHeader->getHeight() + 1, LCD.getDisplayXSize() - 1 - pnlClockSettings->getWidth(), LCD.getDisplayYSize() - pnlSettingsHeader->getWidth() - 2 - 16, 10);
     pnlClockSettings->add(lblClockSettings);
     // pnlBtnSettings->add(btnSettings);
     // frmSettings->add(pnlBtnSettings);
@@ -148,6 +163,14 @@ void setup()
     pinMode(SPEAKER, OUTPUT);
 
     loadMainScreen();
+    frmSettings = new Frame(&LCD);
+    frmSettings->add(btnSettings);
+    teste = new GraphicalComponentContainer();
+    teste->getGraphics()->add(new Rectangle(&LCD, btnSettings->getX() + 2, btnSettings->getY() + 3, btnSettings->getX() + btnSettings->getWidth() - 2, btnSettings->getY() + 4, true));
+    teste->getGraphics()->add(new Rectangle(&LCD, btnSettings->getX() + 2, btnSettings->getY() + 7, btnSettings->getX() + btnSettings->getWidth() - 2, btnSettings->getY() + 8, true));
+    teste->getGraphics()->add(new Rectangle(&LCD, btnSettings->getX() + 2, btnSettings->getY() + 11, btnSettings->getX() + btnSettings->getWidth() - 2, btnSettings->getY() + 12, true));
+    teste->draw();
+    Serial.println("Done");
     // loadSettingsScreen();
 
     btnSettings->setNormalPressAction(&switchFrame);
@@ -156,27 +179,26 @@ void setup()
     currentFrame = frmMain;
 
     // alarm1 = new Alarm(12, 4);
+    btnSettings->setGraphics(teste);
 }
 
 void loop()
 {
     if (time != rtc.getTime())
     {
-        currentFrame->draw();
         if (currentFrame == frmMain)
         {
             lblClock->setText(rtc.getTimeStr());
             lblDow->setText(rtc.getDOWStr());
             lblDate->setText(rtc.getDateStr());
-            lblTemp->setText(String(getTemp()) + " C");
-
-            LCD.drawCircle(307, 4, 2);
+            lblTemp->setText(String(getTemp()));
         }
         else
         {
-            lblClockSettings->setText(rtc.getTimeStr());
+            // lblClockSettings->setText(rtc.getTimeStr());
         }
 
+        currentFrame->draw();
         time = rtc.getTime();
     }
 
@@ -185,6 +207,6 @@ void loop()
         Touch.read();
         int x = Touch.getX();
         int y = Touch.getY();
-        frmMain->onClick(x, y);
+        currentFrame->onClick(x, y);
     }
 }

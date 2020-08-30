@@ -1,4 +1,4 @@
-#pragma once
+/* #pragma once
 #include "Arduino.h"
 #include "UTFT.h"
 
@@ -47,4 +47,13 @@ private:
     word color;
 
     lcd::UTFT *LCD;
-};
+}; */
+
+#pragma once
+
+#include "GraphicalComponent.hpp"
+#include "GraphicalComponentContainer.hpp"
+#include "Line.hpp"
+#include "Rectangle.hpp"
+#include "Circle.hpp"
+#include "Triangle.hpp"

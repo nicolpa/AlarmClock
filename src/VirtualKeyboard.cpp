@@ -4,10 +4,41 @@
 VirtualKeyboard::VirtualKeyboard(lcd::UTFT *LCD, URTouch *Touch)
     : Component(LCD, Touch, 0, 110, LCD->getDisplayXSize() - 1, LCD->getDisplayYSize() - 111)
 {
-    shapeEnter = new Shape(LCD, segEnter, 5);
-    shapeCapsUnlock = new Shape(LCD, segCapsUnlock, 7);
-    shapeCapsTempLock = new Shape(LCD, segCapsTempLock, 8);
-    shapeCapsHardLock = new Shape(LCD, segCapsHardLock, 8);
+    shapeEnter = new GraphicalComponentContainer();
+    shapeEnter->getGraphics()->add(new Line(LCD,  5, 12, 13,  7));
+    shapeEnter->getGraphics()->add(new Line(LCD,  5, 12, 13, 17));
+    shapeEnter->getGraphics()->add(new Line(LCD, 13,  7, 13, 17));
+    shapeEnter->getGraphics()->add(new Line(LCD, 13, 12, 18, 12));
+    shapeEnter->getGraphics()->add(new Line(LCD, 18, 12, 18,  7));
+
+    shapeCapsUnlock = new GraphicalComponentContainer();
+    shapeCapsUnlock->getGraphics()->add(new Line(LCD, 12, 13, 20,  5));
+    shapeCapsUnlock->getGraphics()->add(new Line(LCD, 28, 13, 20,  5));
+    shapeCapsUnlock->getGraphics()->add(new Line(LCD, 12, 13, 17, 13));
+    shapeCapsUnlock->getGraphics()->add(new Line(LCD, 18, 13, 23, 13));
+    shapeCapsUnlock->getGraphics()->add(new Line(LCD, 17, 13, 17, 20));
+    shapeCapsUnlock->getGraphics()->add(new Line(LCD, 23, 13, 23, 20));
+    shapeCapsUnlock->getGraphics()->add(new Line(LCD, 17, 20, 23, 20));
+
+    shapeCapsTempLock = new GraphicalComponentContainer();
+    shapeCapsTempLock->getGraphics()->add(new Line(LCD, 12, 13, 20,  5));
+    shapeCapsTempLock->getGraphics()->add(new Line(LCD, 28, 13, 20,  5));
+    shapeCapsTempLock->getGraphics()->add(new Line(LCD, 12, 13, 17, 13));
+    shapeCapsTempLock->getGraphics()->add(new Line(LCD, 18, 13, 23, 13));
+    shapeCapsTempLock->getGraphics()->add(new Line(LCD, 17, 13, 17, 15));
+    shapeCapsTempLock->getGraphics()->add(new Line(LCD, 23, 13, 23, 15));
+    shapeCapsTempLock->getGraphics()->add(new Line(LCD, 17, 15, 23, 15));
+    shapeCapsTempLock->getGraphics()->add(new Rectangle(LCD, 17, 17, 23, 20));
+
+    shapeCapsHardLock = new GraphicalComponentContainer();
+    shapeCapsHardLock->getGraphics()->add(new Line(LCD, 12, 13, 20,  5));
+    shapeCapsHardLock->getGraphics()->add(new Line(LCD, 28, 13, 20,  5));
+    shapeCapsHardLock->getGraphics()->add(new Line(LCD, 12, 13, 17, 13));
+    shapeCapsHardLock->getGraphics()->add(new Line(LCD, 18, 13, 23, 13));
+    shapeCapsHardLock->getGraphics()->add(new Line(LCD, 17, 13, 17, 15));
+    shapeCapsHardLock->getGraphics()->add(new Line(LCD, 23, 13, 23, 15));
+    shapeCapsHardLock->getGraphics()->add(new Line(LCD, 17, 15, 23, 15));
+    shapeCapsHardLock->getGraphics()->add(new Rectangle(LCD, 17, 17, 23, 20, true));
 
     for (int i = 0; i < 10; i++)
         buttons[i] = new Button(LCD, Touch, 10 + 30 * i, 110, 25, 25, String(keysMin[i]), BigFont);
@@ -77,11 +108,11 @@ bool VirtualKeyboard::onClick(uint16_t x, uint16_t y)
                             buttons[j]->setText(String(keysMaj[j]));
                             buttons[j]->draw();
                         }
-                        buttons[30]->setShape(shapeCapsTempLock);
+                        buttons[30]->setGraphics(shapeCapsTempLock);
                         break;
                     case TEMP_LOCK:
                         CapsLock = HARD_LOCK;
-                        buttons[30]->setShape(shapeCapsHardLock);
+                        buttons[30]->setGraphics(shapeCapsHardLock);
                         break;
                     case HARD_LOCK:
                     default:
@@ -91,7 +122,7 @@ bool VirtualKeyboard::onClick(uint16_t x, uint16_t y)
                             buttons[j]->setText(String(keysMin[j]));
                             buttons[j]->draw();
                         }
-                        buttons[30]->setShape(shapeCapsUnlock);
+                        buttons[30]->setGraphics(shapeCapsUnlock);
                         break;
                     }
                     buttons[30]->draw();

@@ -622,6 +622,65 @@ void UTFT::fillCircle(int x, int y, int radius)
 			}
 }
 
+void UTFT::drawTriangle(int x1, int y1, int x2, int y2, int x3, int y3) 
+{
+	drawLine(x1, y1, x2, y2);
+	drawLine(x2, y2, x3, y3);
+	drawLine(x3, y3, x1, y1);
+}
+
+void UTFT::fillTriangle(int x1, int y1, int x2, int y2, int x3, int y3) 
+{
+	int32_t xs, xe;
+	int16_t y, ly;
+
+	if (y1 > y2)
+	{
+		swap(int, y1, y2); 
+		swap(int, x1, x2);
+	}
+	if (y2 > y3)
+	{
+		swap(int, y3, y2);
+		swap(int, x3, x2);
+	}
+	if (y1 > y2)
+	{
+		swap(int, y1, y2);
+		swap(int, x1, x2);
+	}
+	
+	if(y1 == y3)	// Single line triangles
+	{
+		xs = xe = x1;
+		if(x2 < xs)			xs = x2;
+		else if(x2 > xe)	xe = x2;
+		if(x3 < xs)			xs = x3;
+		else if(x3 > xe)	xe = x3;
+		drawHLine(xs, y1, xe-xs);
+		return;
+	}
+	
+	// Upper part
+	if (y2 == y3) ly = y2;
+	else          ly = y2-1;
+	
+	for(y=y1; y<=ly; y++)
+	{
+		xs = x1 + (x2 - x1) * (y - y1) / (y2 - y1);
+		xe = x1 + (x3 - x1) * (y - y1) / (y3 - y1);
+		drawHLine(xs, y, xe-xs);
+	}
+	
+	// Lower part
+	for(; y<=y3; y++)
+	{
+		xs = x2 + (x3 - x2) * (y - y2) / (y3 - y2);
+		xe = x1 + (x3 - x1) * (y - y1) / (y3 - y1);
+		drawHLine(xs, y, xe-xs);
+	}
+}
+
 void UTFT::clrScr()
 {
 	long i;

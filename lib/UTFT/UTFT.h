@@ -207,6 +207,8 @@ class UTFT
 		void	fillRoundRect(int x1, int y1, int x2, int y2);
 		void	drawCircle(int x, int y, int radius);
 		void	fillCircle(int x, int y, int radius);
+		void 	drawTriangle(int x1, int y1, int x2, int y2, int x3, int y3);
+		void 	fillTriangle(int x1, int y1, int x2, int y2, int x3, int y3);
 		void	setColor(byte r, byte g, byte b);
 		void	setColor(word color);
 		word	getColor();
