@@ -2,6 +2,9 @@
 
 #include "Component.hpp"
 
+class Button;
+class GraphicalComponentContainer;
+
 class GraphicalComponent : public Component
 {
 
@@ -12,6 +15,9 @@ public:
     void setFill(bool fill);
 
     bool getFill();
+
+    void setParent(Button *parent);
+    void setParent(GraphicalComponentContainer *parent);
 
 protected:
     bool fill;

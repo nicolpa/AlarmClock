@@ -11,6 +11,11 @@ Line::~Line()
 
 void Line::draw()
 {
+    if (valid || !visible)
+        return;
+
     LCD->setColor((enable) ? foreground : disableForeground);
     LCD->drawLine(getX(), getY(), getX() + width, getY() + height);
+
+    valid = true;
 }

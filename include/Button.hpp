@@ -1,7 +1,7 @@
 #pragma once
 
 #include "AbstractButton.hpp"
-#include "Shapes.hpp"
+#include "GraphicalComponent.hpp"
 
 class Button : public AbstractButton 
 {

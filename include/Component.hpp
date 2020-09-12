@@ -82,7 +82,7 @@ public:
      * Return the parent of this component
      * @return The parent of this container
      */
-    Container *getParent();
+    Component *getParent();
 
     /**
      * Get the x coordinate of the upper left corner
@@ -230,7 +230,7 @@ protected:
     lcd::UTFT *LCD;
     URTouch *Touch = nullptr;
 
-    Container *parent = nullptr;
+    Component *parent = nullptr;
     
     /**
      * True is the object is visible (although it is only showing if all ancestors are likewise visible)

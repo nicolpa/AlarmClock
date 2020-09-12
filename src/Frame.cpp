@@ -11,9 +11,18 @@ Frame::~Frame()
 {
 }
 
-void Frame::draw() 
+void Frame::clear() 
 {
-    if(!transparent)
+    LCD->clrScr();
+    Container::clear();
+}
+
+void Frame::draw()
+{
+    if (valid || !visible)
+        return;
+
+    if (!transparent)
     {
         LCD->setColor((enable) ? background : disableBackground);
         LCD->fillRect(getX(), getY(), getX() + getWidth(), getY() + getHeight());

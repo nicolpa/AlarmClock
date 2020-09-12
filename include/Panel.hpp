@@ -12,6 +12,7 @@ public:
     Panel(lcd::UTFT* LCD, HorizontalAlignment horizontalAlignment, uint16_t y, uint16_t width, uint16_t height, word borderColor = VGA_WHITE);
     ~Panel();
 
+    void clear() override;
     void draw() override;
 
     /**

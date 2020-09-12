@@ -5,43 +5,43 @@ Panel::Panel(lcd::UTFT *LCD, uint16_t x, uint16_t y, uint16_t width, uint16_t he
 {
 }
 
-Panel::Panel(lcd::UTFT* LCD, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height, word borderColor) 
+Panel::Panel(lcd::UTFT *LCD, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height, word borderColor)
     : Container(LCD, horizontalAlignment, verticalAlignment, width, height)
 {
-    
 }
 
-Panel::Panel(lcd::UTFT* LCD, uint16_t x, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height, word borderColor) 
+Panel::Panel(lcd::UTFT *LCD, uint16_t x, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height, word borderColor)
     : Container(LCD, x, verticalAlignment, width, height)
 {
-    
 }
 
-Panel::Panel(lcd::UTFT* LCD, HorizontalAlignment horizontalAlignment, uint16_t y, uint16_t width, uint16_t height, word borderColor) 
+Panel::Panel(lcd::UTFT *LCD, HorizontalAlignment horizontalAlignment, uint16_t y, uint16_t width, uint16_t height, word borderColor)
     : Container(LCD, horizontalAlignment, y, width, height)
 {
-    
 }
 
 Panel::~Panel()
 {
 }
 
+void Panel::clear() 
+{
+    LCD->setColor(VGA_BLACK);
+    LCD->fillRect(getX(), getY(), getX() + width, getY() + height);
+    Container::clear();
+}
+
 void Panel::draw()
 {
-    if(valid)
+    if (valid || !visible)
         return;
-    if(!visible) return;
 
-    if(!transparent)
+    if (!transparent)
     {
         LCD->setColor((enable) ? background : disableBackground);
-        LCD->fillRect(getX() + (borderLeft) ? 1 : 0, getY() + (borderTop) ? 1 : 0, 
+        LCD->fillRect(getX() + (borderLeft) ? 1 : 0, getY() + (borderTop) ? 1 : 0,
                       getX() + getWidth() - (borderRight) ? 1 : 0, getY() + getHeight() - (borderBottom) ? 1 : 0);
     }
-    
-    int centerX;
-    int centerY;
 
     LCD->setColor((enable) ? foreground : disableBackground);
     if (borderTop)
@@ -52,7 +52,7 @@ void Panel::draw()
         LCD->drawVLine(getX(), getY(), getHeight());
     if (borderRight)
         LCD->drawVLine(getX() + getWidth(), getY(), getHeight());
-    
+
     Container::draw();
 }
 
@@ -62,6 +62,8 @@ void Panel::setBorder(bool top, bool bottom, bool left, bool right)
     borderBottom = bottom;
     borderLeft = left;
     borderRight = right;
+
+    valid = false;
 }
 
 void Panel::setBorder(bool borders)
@@ -70,4 +72,6 @@ void Panel::setBorder(bool borders)
     borderBottom = borders;
     borderLeft = borders;
     borderRight = borders;
+
+    valid = false;
 }

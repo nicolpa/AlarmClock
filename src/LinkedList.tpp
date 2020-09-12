@@ -107,7 +107,7 @@ bool LinkedList<T>::add(int index, T _t)
 template <class T>
 bool LinkedList<T>::add(T _t)
 {
-	Serial.println("elem Added");
+	// Serial.println("elem Added");
 	ListNode<T> *tmp = new ListNode<T>();
 	tmp->data = _t;
 	tmp->next = NULL;

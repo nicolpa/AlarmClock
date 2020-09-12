@@ -11,9 +11,14 @@ Rectangle::~Rectangle()
 
 void Rectangle::draw()
 {
+    if (valid || !visible)
+        return;
+
     LCD->setColor((enable) ? foreground : disableForeground);
     if (fill)
         LCD->fillRect(getX(), getY(), getX() + width, getY() + height);
     else
         LCD->drawRect(getX(), getY(), getX() + width, getY() + height);
+
+    valid = true;
 }

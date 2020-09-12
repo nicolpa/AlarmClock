@@ -1,25 +1,14 @@
 #include <Arduino.h>
 
-#include "LinkedPointerList.h"
-
 #include "UTFT.h"
 #include "URTouch.h"
 #include "DS1307.h"
 
-#include "Component.hpp"
-#include "Panel.hpp"
-#include "Label.hpp"
-#include "Slider.hpp"
-#include "Button.hpp"
-#include "RadioButton.hpp"
-#include "CheckBox.hpp"
-#include "ToggleButtonHolder.hpp"
-#include "RadioButtonHolder.hpp"
-#include "Frame.hpp"
-#include "VirtualKeyboard.hpp"
-#include "Shapes.hpp"
-#include "TextArea.hpp"
+#include "Components.hpp"
+
 #include "Alarm.hpp"
+
+#define LM35 A5
 
 lcd::UTFT LCD(ITDB32S, 38, 39, 40, 41);
 URTouch Touch(6, 5, 4, 3, 2);
@@ -27,39 +16,18 @@ URTouch Touch(6, 5, 4, 3, 2);
 DS1307 rtc(SDA, SCL);
 Time time;
 
+Frame *frmMain, *frmAlarm, *frmSettings;
 Frame *currentFrame;
 
-Frame *frmMain;
-Label *lblClock, *lblDate, *lblDow;
+Button *btnMenu, *btnSettings;
+Label *lblClockMain, *lblClockAlarm, *lblDate, *lblDOW;
 Label *lblTemp;
-Button *btnSettings;
+Panel *pnlClock;
+Panel *pnlAlarms;
 
-Frame *frmSettings;
-Label *lblSettingsHeader;
+Button *btnAlarm, *btnTimer, *btnStopWatch;
 
-Alarm *alarm1;
-
-Panel *pnlSettingsHeader;
-Panel *pnlClockSettings;
-Panel *pnlDateDowSettings;
-Panel *pnlAlarmsSettings;
-Panel *pnlBtnSettings;
-Panel *pnlTemp;
-
-GraphicalComponentContainer *shapeBtnSettings;
-
-Button *btnHourUp, *btnMinUp, *btnSecUp, *btnDayUp, *btnMonthUp, *btnYearUp;
-Button *btnHourDown, *btnMinDown, *btnSecDown, *btnDayDown, *btnMonthDown, *btnYearDown;
-Label *lblClockSettings, *lblDateSettings;
-Circle *circTemp;
-Label *lblTempC;
-
-Alarm *Alarms[5];
-uint8_t nAlarm = 0;
-
-LinkedPointerList<Component>* frm;
-
-#define LM35 A5
+LinkedPointerList<Alarm> alarms;
 
 float getTemp()
 {
@@ -70,78 +38,90 @@ void switchFrame()
 {
     currentFrame->clear();
     if (currentFrame == frmMain)
-        currentFrame = frmSettings;
+    {
+        currentFrame = frmAlarm;
+    }
     else
+    {
         currentFrame = frmMain;
+    }
 }
 
-Panel *test;
-GraphicalComponentContainer *teste;
-void loadMainScreen()
+void loadMainFrame()
 {
-    lblClock = new Label(&LCD, HorizontalAlignment::Center, VerticalAlignment::Center, rtc.getTimeStr(), SevenSegNumFontPlus);
-    // lblClock->draw();
-    lblDow = new Label(&LCD, HorizontalAlignment::Left, 2, rtc.getDOWStr(), SmallFont);
-    lblDate = new Label(&LCD, HorizontalAlignment::Left, 15, rtc.getDateStr(), SmallFont);
-    lblTemp = new Label(&LCD, HorizontalAlignment::Left, 2, String(getTemp()), SmallFont);
-    pnlTemp = new Panel(&LCD, HorizontalAlignment::Right, VerticalAlignment::Up, 56, 12);
-    pnlTemp->setBorder(false);
-    pnlTemp->add(lblTemp);
-    circTemp = new Circle(&LCD, 44, 4, 2);
-    pnlTemp->add(circTemp);
-    
-    lblTempC = new Label(&LCD, 311, 2, "C", SmallFont);
-    Serial.println("C : " + String(lblTempC->getX()));
-    pnlTemp->add(lblTempC);
-    
     frmMain = new Frame(&LCD);
-    frmMain->add(lblClock);
-    frmMain->add(lblDow);
-    frmMain->add(lblDate);
+    frmMain->add(lblDOW = new Label(&LCD, HorizontalAlignment::Left, 2, rtc.getDOWStr(), SmallFont));
+    frmMain->add(lblDate = new Label(&LCD, HorizontalAlignment::Left, 15, rtc.getDateStr(), SmallFont));
+    frmMain->add(lblClockMain = new Label(&LCD, HorizontalAlignment::Center, VerticalAlignment::Center, rtc.getTimeStr(), SevenSegNumFontPlus));
+
+    Panel *pnlTemp = new Panel(&LCD, HorizontalAlignment::Right, VerticalAlignment::Up, 57, 12);
+    pnlTemp->setBorder(false);
+    pnlTemp->add(lblTemp = new Label(&LCD, HorizontalAlignment::Left, 2, String(getTemp()), SmallFont));
+    pnlTemp->add(new Circle(&LCD, 42, 4, 2));
+    pnlTemp->add(new Label(&LCD, HorizontalAlignment::Right, 2, "C", SmallFont));
     frmMain->add(pnlTemp);
-    Serial.println("C : " + String(lblTempC->getX()));
 
-    // shapeBtnSettings = new GraphicalComponentContainer();
-    // shapeBtnSettings->getGraphics()->add(new Rectangle(&LCD, btnSettings->getX() + 2, btnSettings->getY() + 3, btnSettings->getX() + btnSettings->getWidth() - 2, btnSettings->getY() + 4, true));
-    // shapeBtnSettings->getGraphics()->add(new Rectangle(&LCD, btnSettings->getX() + 2, btnSettings->getY() + 7, btnSettings->getX() + btnSettings->getWidth() - 2, btnSettings->getY() + 8, true));
-    // shapeBtnSettings->getGraphics()->add(new Rectangle(&LCD, btnSettings->getX() + 2, btnSettings->getY() + 11, btnSettings->getX() + btnSettings->getWidth() - 2, btnSettings->getY() + 12, true));
-    // shapeBtnSettings->draw();
-
-    
-    Serial.println("Draw");
-    btnSettings = new Button(&LCD, &Touch, HorizontalAlignment::Right, VerticalAlignment::Down, 15, 15);
-    btnSettings->setBorderless(true);
-    frmMain->add(btnSettings);
+    frmMain->add(btnMenu);
 }
 
-void loadSettingsScreen()
+void loadSettingsFrame()
 {
-    lblSettingsHeader = new Label(&LCD, 2, 2, "Settings", SmallFont);
+    frmAlarm = new Frame(&LCD);
 
-    frmSettings = new Frame(&LCD, 10);
-    frmSettings->add(btnSettings);
+    Panel *pnlHeader = new Panel(&LCD, 0, 0, LCD.getDisplayXSize() - 1, 20);
+    pnlHeader->setBorder(false, true, false, false);
+    pnlHeader->add(new Label(&LCD, 0, VerticalAlignment::Center, "Alarm", SmallFont));
+    frmAlarm->add(pnlHeader);
 
+    Line *lineBtnSettingsTop = new Line(&LCD, 2, 2, 14, 2);
+    Rectangle *rectBtnSettingsTop = new Rectangle(&LCD, lineBtnSettingsTop->getX() + lineBtnSettingsTop->getWidth() - 5, lineBtnSettingsTop->getY() - 2,
+                                                  lineBtnSettingsTop->getX() + lineBtnSettingsTop->getWidth() - 2, lineBtnSettingsTop->getY() + 2, true);
 
-    pnlSettingsHeader = new Panel(&LCD, 0, 0, LCD.getDisplayXSize() - 1, 20, 20);
-    pnlSettingsHeader->setBorder(false, true, false, false);
-    pnlClockSettings = new Panel(&LCD, 0, pnlSettingsHeader->getHeight() + 1, 150, LCD.getDisplayYSize() - 1 - pnlSettingsHeader->getHeight() - 16, 10);
-    pnlClockSettings->setBorder(false, false, false, true);
+    Line *lineBtnSettingsBottom1 = new Line(&LCD, 2, 10, 5, 10);
+    Line *lineBtnSettingsBottom2 = new Line(&LCD, 8, 10, 14, 10);
 
-    lblClockSettings = new Label(&LCD, HorizontalAlignment::Center, VerticalAlignment::Center, rtc.getTimeStr(), BigFont);
+    Rectangle *rectBtnSettingsBottom = new Rectangle(&LCD, lineBtnSettingsBottom1->getX() + lineBtnSettingsBottom1->getWidth(), lineBtnSettingsBottom1->getY() - 2,
+                                                     lineBtnSettingsBottom2->getX(), lineBtnSettingsBottom1->getY() + 2);
 
-    lblClockSettings = new Label(&LCD, HorizontalAlignment::Center, VerticalAlignment::Center, rtc.getTimeStr(), BigFont);
-    lblDateSettings = new Label(&LCD, HorizontalAlignment::Center, VerticalAlignment::Center, rtc.getDateStr(), BigFont);
-    pnlDateDowSettings->setBorder(false);
-    pnlBtnSettings = new Panel(&LCD, pnlClockSettings->getWidth(), pnlDateDowSettings->getY() + pnlDateDowSettings->getHeight(), pnlDateDowSettings->getX() + pnlDateDowSettings->getWidth(), LCD.getDisplayXSize() - 1 - pnlClockSettings->getWidth(), 10);
-    pnlDateDowSettings = new Panel(&LCD, pnlClockSettings->getWidth() + 1, pnlSettingsHeader->getHeight() + 1, LCD.getDisplayXSize() - 1 - pnlClockSettings->getWidth(), LCD.getDisplayYSize() - pnlSettingsHeader->getWidth() - 2 - 16, 10);
-    pnlClockSettings->add(lblClockSettings);
-    // pnlBtnSettings->add(btnSettings);
-    // frmSettings->add(pnlBtnSettings);
-    frmSettings->add(pnlSettingsHeader);
-    frmSettings->add(pnlClockSettings);
-    frmSettings->add(pnlDateDowSettings);
+    GraphicalComponentContainer *shapeBtnSettings = new GraphicalComponentContainer();
+    shapeBtnSettings->add(lineBtnSettingsTop);
+    shapeBtnSettings->add(rectBtnSettingsTop);
+    shapeBtnSettings->add(lineBtnSettingsBottom1);
+    shapeBtnSettings->add(rectBtnSettingsBottom);
+    shapeBtnSettings->add(lineBtnSettingsBottom2);
 
-    pnlSettingsHeader->add(lblSettingsHeader);
+    btnSettings = new Button(&LCD, &Touch, HorizontalAlignment::Right, VerticalAlignment::Center, 16, 15, shapeBtnSettings);
+    // btnSettings->setBorderless(true);
+    pnlHeader->add(btnSettings);
+
+    frmAlarm->add(pnlClock = new Panel(&LCD, 0, pnlHeader->getHeight() + 1, 150, LCD.getDisplayYSize() - pnlHeader->getHeight() - 1));
+    pnlClock->setBorder(false, false, false, true);
+    pnlClock->add(lblClockAlarm = new Label(&LCD, HorizontalAlignment::Center, VerticalAlignment::Center, rtc.getTimeStr(), BigFont));
+    frmAlarm->add(pnlAlarms = new Panel(&LCD, pnlClock->getWidth(), pnlHeader->getHeight() + 1,
+                                        LCD.getDisplayXSize() - pnlClock->getWidth() - 1, LCD.getDisplayYSize() - pnlHeader->getHeight() - btnMenu->getHeight() - 5));
+    pnlAlarms->setBorder(false, true, false, false);
+    static Panel *pnlBtnMenu = new Panel(&LCD, pnlAlarms->getX(), pnlAlarms->getY() + pnlAlarms->getHeight(),
+                                         pnlAlarms->getWidth() - btnMenu->getWidth() - 5, LCD.getDisplayYSize() - pnlAlarms->getHeight() - pnlHeader->getHeight() - 1);
+    pnlBtnMenu->add(btnAlarm = new Button(&LCD, &Touch, 0, 0, pnlBtnMenu->getWidth() / 3, pnlBtnMenu->getHeight(), "A", SmallFont));
+    pnlBtnMenu->add(btnStopWatch = new Button(&LCD, &Touch, HorizontalAlignment::Center, 0, pnlBtnMenu->getWidth() / 3, pnlBtnMenu->getHeight(), "S", SmallFont));
+    pnlBtnMenu->add(btnTimer = new Button(&LCD, &Touch, HorizontalAlignment::Right, 0, pnlBtnMenu->getWidth() / 3, pnlBtnMenu->getHeight(), "T", SmallFont));
+    pnlBtnMenu->setBorder(false);
+
+    frmAlarm->add(pnlBtnMenu);
+
+    static Panel *pnlAlarm1 = new Panel(&LCD, 0, 0, pnlAlarms->getWidth(), 40);
+    pnlAlarm1->setBorder(false, true, false, false);
+    static Label *lblTime = new Label(&LCD, 5, 5, "06:30", BigFont);
+    pnlAlarm1->add(lblTime);
+    static Label *lblLabel = new Label(&LCD, 5, lblTime->getY() + lblTime->getHeight() + 5, "Alarm,", SmallFont);
+    pnlAlarm1->add(lblLabel);
+    static Label *lblRepeat = new Label(&LCD, lblLabel->getX() + lblLabel->getWidth() + 10, lblLabel->getY(), "Repeat once", SmallFont);
+    pnlAlarm1->add(lblRepeat);
+    pnlAlarms->add(pnlAlarm1);
+    static Label *lblNextRing = new Label(&LCD, HorizontalAlignment::Center, pnlClock->getY() + pnlClock->getHeight() - 50, "No alarms on", SmallFont);
+    pnlClock->add(lblNextRing);
+
+    frmAlarm->add(btnMenu);
 }
 
 void setup()
@@ -150,11 +130,11 @@ void setup()
 
     rtc.begin();
     rtc.halt(false);
-
     time = rtc.getTime();
 
     LCD.fade(true);
     LCD.InitLCD();
+
     Touch.InitTouch();
     Touch.setPrecision(PREC_MEDIUM);
 
@@ -162,24 +142,19 @@ void setup()
     pinMode(LM35, INPUT);
     pinMode(SPEAKER, OUTPUT);
 
-    loadMainScreen();
-    frmSettings = new Frame(&LCD);
-    frmSettings->add(btnSettings);
-    teste = new GraphicalComponentContainer();
-    teste->getGraphics()->add(new Rectangle(&LCD, btnSettings->getX() + 2, btnSettings->getY() + 3, btnSettings->getX() + btnSettings->getWidth() - 2, btnSettings->getY() + 4, true));
-    teste->getGraphics()->add(new Rectangle(&LCD, btnSettings->getX() + 2, btnSettings->getY() + 7, btnSettings->getX() + btnSettings->getWidth() - 2, btnSettings->getY() + 8, true));
-    teste->getGraphics()->add(new Rectangle(&LCD, btnSettings->getX() + 2, btnSettings->getY() + 11, btnSettings->getX() + btnSettings->getWidth() - 2, btnSettings->getY() + 12, true));
-    teste->draw();
-    Serial.println("Done");
-    // loadSettingsScreen();
+    btnMenu = new Button(&LCD, &Touch, HorizontalAlignment::Right, VerticalAlignment::Down, 16, 16);
+    GraphicalComponentContainer *shapeBtnMenu = new GraphicalComponentContainer();
+    shapeBtnMenu->add(new Rectangle(&LCD, 2, 3, btnMenu->getWidth() - 2, 4, true));
+    shapeBtnMenu->add(new Rectangle(&LCD, 2, 7, btnMenu->getWidth() - 2, 8, true));
+    shapeBtnMenu->add(new Rectangle(&LCD, 2, 11, btnMenu->getWidth() - 2, 12, true));
+    btnMenu->setGraphics(shapeBtnMenu);
+    btnMenu->setBorderless(true);
+    btnMenu->setNormalPressAction(&switchFrame);
 
-    btnSettings->setNormalPressAction(&switchFrame);
-    btnSettings->setTextHighlight(true);
+    loadMainFrame();
+    loadSettingsFrame();
 
     currentFrame = frmMain;
-
-    // alarm1 = new Alarm(12, 4);
-    btnSettings->setGraphics(teste);
 }
 
 void loop()
@@ -188,14 +163,14 @@ void loop()
     {
         if (currentFrame == frmMain)
         {
-            lblClock->setText(rtc.getTimeStr());
-            lblDow->setText(rtc.getDOWStr());
+            lblClockMain->setText(rtc.getTimeStr());
             lblDate->setText(rtc.getDateStr());
+            lblDOW->setText(rtc.getDOWStr());
             lblTemp->setText(String(getTemp()));
         }
-        else
+        else if (currentFrame == frmAlarm)
         {
-            // lblClockSettings->setText(rtc.getTimeStr());
+            lblClockAlarm->setText(rtc.getTimeStr());
         }
 
         currentFrame->draw();
@@ -205,8 +180,6 @@ void loop()
     if (Touch.dataAvailable())
     {
         Touch.read();
-        int x = Touch.getX();
-        int y = Touch.getY();
-        currentFrame->onClick(x, y);
+        currentFrame->onClick(Touch.getX(), Touch.getY());
     }
 }

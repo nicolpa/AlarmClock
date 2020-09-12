@@ -6,19 +6,19 @@ Container::Container(lcd::UTFT *LCD, uint16_t x, uint16_t y, uint16_t width, uin
     components = new LinkedPointerList<Component>;
 }
 
-Container::Container(lcd::UTFT *LCD, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height) 
+Container::Container(lcd::UTFT *LCD, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height)
     : Component(LCD, horizontalAlignment, verticalAlignment, width, height)
 {
     components = new LinkedPointerList<Component>;
 }
 
-Container::Container(lcd::UTFT *LCD, uint16_t x, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height) 
+Container::Container(lcd::UTFT *LCD, uint16_t x, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height)
     : Component(LCD, x, verticalAlignment, width, height)
 {
     components = new LinkedPointerList<Component>;
 }
 
-Container::Container(lcd::UTFT *LCD, HorizontalAlignment horizontalAlignment, uint16_t y, uint16_t width, uint16_t height) 
+Container::Container(lcd::UTFT *LCD, HorizontalAlignment horizontalAlignment, uint16_t y, uint16_t width, uint16_t height)
     : Component(LCD, horizontalAlignment, y, width, height)
 {
     components = new LinkedPointerList<Component>;
@@ -31,9 +31,9 @@ Container::~Container()
 
 void Container::clear()
 {
-    Component::clear();
     for (int i = 0; i < components->size(); i++)
-        components->get(i)->invalidate();
+        components->get(i)->clear();
+    invalidate();
 }
 
 int Container::getComponentsCount()
@@ -48,30 +48,35 @@ Component *Container::getComponent(uint16_t index)
 
 void Container::add(Component *component)
 {
-    Serial.println(">> " + String(component->getX()));
-    if(components->add(component))
-    {
+    if (components->add(component))
         component->setParent(this);
-        component->updateLayout();
-        Serial.println(String(component->getX()) + "<<");
-    }
 }
 
 void Container::add(Component *component, uint16_t index)
 {
     if (components->add(index, component))
-    {
         component->setParent(this);
-        component->updateLayout();
-    }
 }
 
 void Container::remove(uint16_t index)
 {
-    if (components->remove(index))
+    if (components->get(index) != nullptr)
     {
         components->get(index)->setParent(nullptr);
-        components->get(index)->updateLayout();
+        components->remove(index);
+    }
+}
+
+void Container::remove(Component *component)
+{
+    for (int i = 0; i < components->size(); i++)
+    {
+        if (component == components->get(i))
+        {
+            components->get(i)->setParent(nullptr);
+            components->remove(i);
+            return;
+        }
     }
 }
 
@@ -82,25 +87,28 @@ void Container::removeAll()
         components->get(i)->setParent(nullptr);
         components->get(i)->updateLayout();
     }
+
     components->clear();
 }
 
 void Container::draw()
 {
-    if(valid)
-        return;
-        
     for (int i = 0; i < components->size(); i++)
-        components->get(i)->draw();
+    {
+        if (components->get(i) != nullptr)
+            components->get(i)->draw();
+    }
 
-    // int centerX = getX() + (getWidth() / 2);
-    // int centerY = getY() + (getHeight() / 2);
+    /* int centerX = getX() + (getWidth() / 2);
+    int centerY = getY() + (getHeight() / 2);
 
-    // LCD->setColor(VGA_GREEN);
-    // LCD->drawVLine(centerX, centerY - 5, 10);
+    LCD->setColor(VGA_GREEN);
+    LCD->drawVLine(centerX, centerY - 5, 10);
 
-    // LCD->setColor(VGA_RED);
-    // LCD->drawHLine(centerX - 5, centerY, 10);
+    LCD->setColor(VGA_RED);
+    LCD->drawHLine(centerX - 5, centerY, 10); */
+
+    valid = true;
 }
 
 bool Container::onClick(uint16_t x, uint16_t y)
@@ -112,9 +120,9 @@ bool Container::onClick(uint16_t x, uint16_t y)
     return Component::onClick(x, y);
 }
 
-void Container::updateLayout() 
+void Container::updateLayout()
 {
     Component::updateLayout();
-    for(int i = 0; i < components->size(); i++)
+    for (int i = 0; i < components->size(); i++)
         components->get(i)->updateLayout();
 }

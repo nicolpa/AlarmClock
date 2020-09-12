@@ -58,7 +58,7 @@ void Component::clear()
 {
     LCD->setColor(VGA_BLACK);
     LCD->fillRect(getX(), getY(), getX() + width, getY() + height);
-    valid = false;
+    invalidate();
 }
 
 bool Component::onClick(uint16_t x, uint16_t y)
@@ -103,7 +103,7 @@ bool Component::isEnable()
     return enable;
 }
 
-Container *Component::getParent()
+Component *Component::getParent()
 {
     return parent;
 }
@@ -133,7 +133,7 @@ uint8_t *Component::getFont()
     return font;
 }
 
-bool Component::isTransparent() 
+bool Component::isTransparent()
 {
     return transparent;
 }
@@ -141,14 +141,13 @@ bool Component::isTransparent()
 void Component::setParent(Container *parent)
 {
     this->parent = parent;
-    valid = false;
+    updateLayout();
 }
 
 void Component::setVisible(bool visible)
 {
     this->visible = visible;
     clear();
-    valid = false;
 }
 
 void Component::setClickable(bool clickable)
@@ -227,7 +226,7 @@ void Component::setFont(uint8_t *font)
 {
     this->font = font;
 
-    valid = false;
+    updateLayout();
 }
 
 void Component::setNormalPressAction(void (*normalPressAction)(void))
@@ -282,18 +281,18 @@ void Component::updateLayout()
         this->x = 0;
         break;
     case HorizontalAlignment::Right:
-    // Serial.println("//===========================================------");
-    // if(parent != nullptr)
-    // {
-    //     Serial.println(String(parent->getX()));
-    //     Serial.println(String(parent->getWidth()));
-    //     Serial.println(String(width));
-    // }
-        this->x = (parent == nullptr) ? LCD->getDisplayXSize() - width - 1: parent->getX() + parent->getWidth() - width - 1;
-        Serial.println(String(x));
+        // Serial.println("//===========================================------");
+        // if(parent != nullptr)
+        // {
+        //     Serial.println(String(parent->getX()));
+        //     Serial.println(String(parent->getWidth()));
+        //     Serial.println(String(width));
+        // }
+        this->x = (parent == nullptr) ? LCD->getDisplayXSize() - width - 1 : /* parent->getX() + */ parent->getWidth() - width - 1;
+        // Serial.println(String(x));
         break;
     case HorizontalAlignment::Center:
-        this->x = (parent == nullptr) ? (LCD->getDisplayXSize() - width) / 2 : parent->getX() + ((parent->getWidth() - width) / 2);
+        this->x = (parent == nullptr) ? (LCD->getDisplayXSize() - width) / 2 : /* parent->getX() + */ ((parent->getWidth() - width) / 2);
         break;
     case HorizontalAlignment::None:
     default:
@@ -306,71 +305,73 @@ void Component::updateLayout()
         this->y = 0;
         break;
     case VerticalAlignment::Down:
-        this->y = (parent == nullptr) ? LCD->getDisplayYSize() - height : parent->getY() + parent->getHeight() - height - 1;
+        this->y = (parent == nullptr) ? LCD->getDisplayYSize() - height : /* parent->getY() + */ parent->getHeight() - height - 1;
         break;
     case VerticalAlignment::Center:
-        this->y = (parent == nullptr) ? (LCD->getDisplayYSize() - height) / 2 : parent->getY() + ((parent->getHeight() - height) / 2);
+        this->y = (parent == nullptr) ? (LCD->getDisplayYSize() - height) / 2 : /* parent->getY() + */ ((parent->getHeight() - height) / 2);
         break;
     case VerticalAlignment::None:
     default:
         break;
     }
-
-    if(getX() >= LCD->getDisplayXSize())
+    if (getX() >= LCD->getDisplayXSize())
+    {
+        // Serial.println("<< " + String(getX()) + ">>");
         this->x = LCD->getDisplayXSize() - 1;
-    if(getY() >= LCD->getDisplayYSize())
+    }
+    if (getY() >= LCD->getDisplayYSize())
         this->y = LCD->getDisplayYSize() - 1;
-    if(getX() + width >= LCD->getDisplayXSize())
+    if (getX() + width >= LCD->getDisplayXSize())
         this->width = LCD->getDisplayXSize() - getX() - 1;
-    if(getY() + height >= LCD->getDisplayYSize())
+    if (getY() + height >= LCD->getDisplayYSize())
         this->height = LCD->getDisplayYSize() - getY() - 1;
 
     invalidate();
 }
 
-void Component::setForeground(word foreground) 
+void Component::setForeground(word foreground)
 {
     this->foreground = foreground;
     invalidate();
 }
 
-void Component::setBackground(word background) 
+void Component::setBackground(word background)
 {
     this->background = background;
     invalidate();
 }
 
-void Component::setDisableForeground(word disableForeground) 
+void Component::setDisableForeground(word disableForeground)
 {
     this->disableForeground = disableForeground;
     invalidate();
 }
 
-void Component::setDisableBackground(word disableForeground) 
+void Component::setDisableBackground(word disableForeground)
 {
     this->disableBackground = disableBackground;
     invalidate();
 }
 
-void Component::setTransparent(bool transparent) 
+void Component::setTransparent(bool transparent)
 {
     this->transparent = transparent;
 }
 
-void Component::validate() 
+void Component::validate()
 {
     valid = true;
 }
 
-void Component::invalidate() 
+void Component::invalidate()
 {
     valid = false;
-    
-    if(parent != nullptr)
+
+    if (parent != nullptr)
         parent->invalidate();
 }
 
-void Component::print() 
+void Component::print()
 {
     Serial.println("Yup");
 }

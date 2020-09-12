@@ -1,14 +1,17 @@
 #pragma once
 
-#include "Container.hpp"
+#include "Panel.hpp"
 #include "RadioButton.hpp"
 #include "CheckBox.hpp"
 
-class ToggleButtonHolder : public Container
+class ToggleButtonHolder : public Panel
 {
 
 public:
-    ToggleButtonHolder();
+    ToggleButtonHolder(lcd::UTFT* LCD, uint16_t x, uint16_t y, uint16_t width, uint16_t height, word borderColor = VGA_WHITE);
+    ToggleButtonHolder(lcd::UTFT* LCD, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height, word borderColor = VGA_WHITE);
+    ToggleButtonHolder(lcd::UTFT* LCD, uint16_t x, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height, word borderColor = VGA_WHITE);
+    ToggleButtonHolder(lcd::UTFT* LCD, HorizontalAlignment horizontalAlignment, uint16_t y, uint16_t width, uint16_t height, word borderColor = VGA_WHITE);
     ~ToggleButtonHolder();
 
     bool* getSelectedButtons();

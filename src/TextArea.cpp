@@ -1,9 +1,9 @@
 #include "TextArea.hpp"
 
-TextArea::~TextArea() {
-
+TextArea::~TextArea()
+{
 }
-TextArea::TextArea(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t width, uint8_t *font) 
+TextArea::TextArea(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t width, uint8_t *font)
     : Component(LCD, x, y, width, 0)
 {
     this->Touch = Touch;
@@ -27,8 +27,10 @@ TextArea::TextArea(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint1
     keyboard->subscribeComponent(this);
 }
 
-void TextArea::draw() 
+void TextArea::draw()
 {
+    if (valid || !visible)
+        return;
     LCD->setColor(VGA_BLACK);
     LCD->fillRect(getX() + 1, getY() + 1, getX() + width - 1, getY() + height - 1);
     LCD->setColor(foreground);
@@ -36,14 +38,17 @@ void TextArea::draw()
 
     LCD->setFont(font);
     LCD->print(text, getX() + 5, getY() + 5);
+
+    valid = true;
 }
 
-bool TextArea::onClick(uint16_t x, uint16_t y) 
+bool TextArea::onClick(uint16_t x, uint16_t y)
 {
-    while(Touch->dataAvailable());
-    if(contains(x, y))
+    while (Touch->dataAvailable())
+        ;
+    if (contains(x, y))
     {
-        if(!focus)
+        if (!focus)
             keyboard->draw();
         else
             keyboard->clear();
@@ -53,9 +58,9 @@ bool TextArea::onClick(uint16_t x, uint16_t y)
         return true;
     }
 
-    if(focus)
+    if (focus)
     {
-        if(keyboard->onClick(x, y))
+        if (keyboard->onClick(x, y))
             return true;
         else
             keyboard->clear();
@@ -66,30 +71,30 @@ bool TextArea::onClick(uint16_t x, uint16_t y)
     return false;
 }
 
-String TextArea::getText() 
+String TextArea::getText()
 {
     return text;
 }
 
-void TextArea::update(char character) 
+void TextArea::update(char character)
 {
     LCD->setFont(font);
-    
-    if(character == '\0')
+
+    if (character == '\0')
     {
         text.remove(text.length() - 1);
         int x = getX() + text.length() * LCD->getFontXsize() + 5;
         LCD->setColor(VGA_BLACK);
         LCD->fillRect(x, getY() + 5, x + LCD->getFontXsize(), getY() + 5 + LCD->getFontYsize());
     }
-    else if(character == '\n')
+    else if (character == '\n')
     {
         focus = false;
         keyboard->clear();
     }
     else
     {
-        if(text.length() <= maxLength)
+        if (text.length() <= maxLength)
         {
             LCD->setColor(VGA_WHITE);
             text += character;

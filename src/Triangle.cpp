@@ -1,6 +1,6 @@
 #include "Triangle.hpp"
 
-Triangle::Triangle(lcd::UTFT *LCD, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t x3, uint16_t y3, bool fill) 
+Triangle::Triangle(lcd::UTFT *LCD, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t x3, uint16_t y3, bool fill)
     : GraphicalComponent(LCD, 0, 0, 0, 0, fill), x1(x1), y1(y1), x2(x2), y2(y2), x3(x3), y3(y3)
 {
     x = min(x1, min(x2, x3));
@@ -9,15 +9,20 @@ Triangle::Triangle(lcd::UTFT *LCD, uint16_t x1, uint16_t y1, uint16_t x2, uint16
     height = max(y1, max(y2, y3)) - y;
 }
 
-Triangle::~Triangle() {
-
+Triangle::~Triangle()
+{
 }
 
-void Triangle::draw() 
+void Triangle::draw()
 {
+    if (valid || !visible)
+        return;
+
     LCD->setColor((enable) ? foreground : disableForeground);
-    if(fill)
+    if (fill)
         LCD->fillTriangle(x1, y1, x2, y2, x3, y3);
     else
-    LCD->drawTriangle(x1, y1, x2, y2, x3, y3);
+        LCD->drawTriangle(x1, y1, x2, y2, x3, y3);
+
+    valid = true;
 }

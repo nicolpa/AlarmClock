@@ -9,5 +9,6 @@ public:
     Frame(lcd::UTFT *LCD, word background = VGA_TRANSPARENT);
     ~Frame();
 
+    void clear() override;
     void draw() override;
 };

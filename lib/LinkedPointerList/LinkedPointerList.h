@@ -65,7 +65,7 @@ public:
 	virtual bool set(int index, T *);
 	/*
 	 * Removes pointer at specified index;
-	 * If index is not reachable, returns NULL;
+	 * If index is not reachable, returns nullptr;
 	 */
 	virtual T *remove(int index);
 	/*
@@ -78,7 +78,7 @@ public:
 	virtual T *shift();
 	/*
 	 * Gets a pointer at specified index.
-	 * Returns the pointer, or NULL if not existing.
+	 * Returns the pointer, or nullptr if not existing.
 	 */
 	virtual T *get(int index);
 
@@ -95,7 +95,7 @@ public:
 template <typename T>
 LinkedPointerList<T>::LinkedPointerList()
 {
-	root = NULL;
+	root = nullptr;
 	_size = 0;
 }
 
@@ -125,7 +125,7 @@ PointerListNode<T> *LinkedPointerList<T>::getNode(unsigned char index)
 		return current;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 template <typename T>
@@ -160,7 +160,7 @@ bool LinkedPointerList<T>::add(T *_t)
 
 	PointerListNode<T> *tmp = new PointerListNode<T>();
 	tmp->data = _t;
-	tmp->next = NULL;
+	tmp->next = nullptr;
 
 	if (root)
 	{
@@ -212,14 +212,14 @@ template <typename T>
 T *LinkedPointerList<T>::pop()
 {
 	if (_size <= 0)
-		return NULL;
+		return nullptr;
 
 	if (_size >= 2)
 	{
 		PointerListNode<T> *tmp = getNode(_size - 2);
 		T *ret = tmp->next->data;
 		delete (tmp->next);
-		tmp->next = NULL;
+		tmp->next = nullptr;
 		_size--;
 		return ret;
 	}
@@ -228,7 +228,7 @@ T *LinkedPointerList<T>::pop()
 		// Only one element left on the list
 		T *ret = root->data;
 		delete (root);
-		root = NULL;
+		root = nullptr;
 		_size = 0;
 		return ret;
 	}
@@ -238,7 +238,7 @@ template <typename T>
 T *LinkedPointerList<T>::shift()
 {
 	if (_size <= 0)
-		return NULL;
+		return nullptr;
 
 	if (_size > 1)
 	{
@@ -262,7 +262,7 @@ T *LinkedPointerList<T>::remove(int index)
 {
 	if (index < 0 || index >= _size)
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	if (index == 0)
@@ -287,14 +287,14 @@ T *LinkedPointerList<T>::get(int index)
 {
 	PointerListNode<T> *tmp = getNode(index);
 
-	return (tmp ? tmp->data : NULL);
+	return (tmp ? tmp->data : nullptr);
 }
 
 template <typename T>
 void LinkedPointerList<T>::clear()
 {
 	PointerListNode<T> *tmp;
-	while (root != NULL)
+	while (root != nullptr)
 	{
 		tmp = root;
 		root = root->next;

@@ -5,7 +5,7 @@ Slider::Slider(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t 
 {
     clickable = true;
 
-    if(orientation == Orientation::HORIZONTAL)
+    if (orientation == Orientation::HORIZONTAL)
     {
         width = length;
         height = 5;
@@ -19,15 +19,18 @@ Slider::Slider(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t 
 
 Slider::~Slider()
 {
-    if(ticksValues != nullptr)
-        delete  [] ticksValues;
+    if (ticksValues != nullptr)
+        delete[] ticksValues;
     // if (picker != nullptr)
     //     delete picker;
 }
 
 void Slider::draw()
 {
-    if(orientation == Orientation::HORIZONTAL)
+    if (valid || !visible)
+        return;
+
+    if (orientation == Orientation::HORIZONTAL)
     {
         int screenSpaceValue = map(value, minimum, maximum, getX(), getX() + width);
 
@@ -41,13 +44,13 @@ void Slider::draw()
         LCD->setColor(foreground);
         LCD->drawRect(screenSpaceValue + 2, getY(), getX() + width, getY() + height);
 
-        if(showTicks)
+        if (showTicks)
         {
-            if(ticksValues == nullptr)
-                for(int i = minimum; i <= maximum; i++)
+            if (ticksValues == nullptr)
+                for (int i = minimum; i <= maximum; i++)
                     LCD->drawVLine(map(i, minimum, maximum, getX(), getX() + width), getY() - 1, height + 2);
             else
-                for(int i = 0; i < nTicks; i++)
+                for (int i = 0; i < nTicks; i++)
                     LCD->drawVLine(map(ticksValues[i], minimum, maximum, getX(), getX() + width), getY() - 1, height + 2);
         }
 
@@ -67,18 +70,20 @@ void Slider::draw()
         LCD->setColor(foreground);
         LCD->drawRect(getX(), screenSpaceValue + 2, getX() + width, getY() + height);
 
-        if(showTicks)
+        if (showTicks)
         {
-            if(ticksValues == nullptr)
-                for(int i = minimum; i <= maximum; i++)
+            if (ticksValues == nullptr)
+                for (int i = minimum; i <= maximum; i++)
                     LCD->drawHLine(getX() - 1, map(i, minimum, maximum, getY(), getY() + height), width + 2);
             else
-                for(int i = 0; i < nTicks; i++)
+                for (int i = 0; i < nTicks; i++)
                     LCD->drawHLine(getX() - 1, map(ticksValues[i], minimum, maximum, getY(), getY() + height), width + 2);
         }
 
         LCD->fillRect(getX() - 2, screenSpaceValue - 2, getX() + width + 2, screenSpaceValue + 2);
     }
+
+    valid = true;
 }
 
 bool Slider::onClick(uint16_t x, uint16_t y)
@@ -92,42 +97,45 @@ bool Slider::onClick(uint16_t x, uint16_t y)
             Touch->read();
             int oldValue = value;
 
-            if(orientation == Orientation::HORIZONTAL)
+            if (orientation == Orientation::HORIZONTAL)
             {
-                if(abs(x - Touch->getX()) > 4)
+                if (abs(x - Touch->getX()) > 4)
                 {
                     x = Touch->getX();
-                    if(x < getX()) x = getX();
-                    if(x > getX() + width) x = getX() + width;
+                    if (x < getX())
+                        x = getX();
+                    if (x > getX() + width)
+                        x = getX() + width;
 
                     setValue(map(x, getX(), getX() + width, minimum, maximum));
 
-                    if(oldValue != value)
+                    if (oldValue != value)
                     {
                         int screenSpaceValue = map(oldValue, minimum, maximum, getX(), getX() + width);
                         LCD->setColor(background);
                         LCD->fillRect(screenSpaceValue - 2, getY() - 2, screenSpaceValue + 2, getY() + height + 4);
                         draw();
                     }
-
-                } 
+                }
             }
             else
             {
-                if(abs(y - Touch->getY()) > 4)
+                if (abs(y - Touch->getY()) > 4)
                 {
                     y = Touch->getY();
-                    if(y < getY()) y = getY();
-                    if(y > getY() + height) y = getY() + height;
+                    if (y < getY())
+                        y = getY();
+                    if (y > getY() + height)
+                        y = getY() + height;
 
                     setValue(map(y, getY(), getY() + height, minimum, maximum));
-                    
-                    if(oldValue != value)
+
+                    if (oldValue != value)
                     {
                         int screenSpaceValue = map(oldValue, minimum, maximum, getY(), getY() + height);
                         LCD->setColor(background);
                         LCD->fillRect(getX() - 2, screenSpaceValue - 2, getX() + width + 4, screenSpaceValue + 2);
-                        draw();                        
+                        draw();
                     }
                 }
             }
@@ -194,7 +202,7 @@ void Slider::setTickSpacing(uint16_t spacing)
     {
         if (ticksValues != nullptr)
         {
-            delete [] ticksValues;
+            delete[] ticksValues;
             ticksValues = nullptr;
         }
     }
