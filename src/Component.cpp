@@ -281,18 +281,10 @@ void Component::updateLayout()
         this->x = 0;
         break;
     case HorizontalAlignment::Right:
-        // Serial.println("//===========================================------");
-        // if(parent != nullptr)
-        // {
-        //     Serial.println(String(parent->getX()));
-        //     Serial.println(String(parent->getWidth()));
-        //     Serial.println(String(width));
-        // }
-        this->x = (parent == nullptr) ? LCD->getDisplayXSize() - width - 1 : /* parent->getX() + */ parent->getWidth() - width - 1;
-        // Serial.println(String(x));
+        this->x = (parent == nullptr) ? LCD->getDisplayXSize() - width - 1 : parent->getWidth() - width - 1;
         break;
     case HorizontalAlignment::Center:
-        this->x = (parent == nullptr) ? (LCD->getDisplayXSize() - width) / 2 : /* parent->getX() + */ ((parent->getWidth() - width) / 2);
+        this->x = (parent == nullptr) ? (LCD->getDisplayXSize() - width) / 2 : ((parent->getWidth() - width) / 2);
         break;
     case HorizontalAlignment::None:
     default:
@@ -305,20 +297,18 @@ void Component::updateLayout()
         this->y = 0;
         break;
     case VerticalAlignment::Down:
-        this->y = (parent == nullptr) ? LCD->getDisplayYSize() - height : /* parent->getY() + */ parent->getHeight() - height - 1;
+        this->y = (parent == nullptr) ? LCD->getDisplayYSize() - height : parent->getHeight() - height - 1;
         break;
     case VerticalAlignment::Center:
-        this->y = (parent == nullptr) ? (LCD->getDisplayYSize() - height) / 2 : /* parent->getY() + */ ((parent->getHeight() - height) / 2);
+        this->y = (parent == nullptr) ? (LCD->getDisplayYSize() - height) / 2 : ((parent->getHeight() - height) / 2);
         break;
     case VerticalAlignment::None:
     default:
         break;
     }
+
     if (getX() >= LCD->getDisplayXSize())
-    {
-        // Serial.println("<< " + String(getX()) + ">>");
         this->x = LCD->getDisplayXSize() - 1;
-    }
     if (getY() >= LCD->getDisplayYSize())
         this->y = LCD->getDisplayYSize() - 1;
     if (getX() + width >= LCD->getDisplayXSize())
@@ -356,6 +346,7 @@ void Component::setDisableBackground(word disableForeground)
 void Component::setTransparent(bool transparent)
 {
     this->transparent = transparent;
+    invalidate();
 }
 
 void Component::validate()

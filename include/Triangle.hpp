@@ -8,6 +8,7 @@ public:
     Triangle(lcd::UTFT *LCD, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t x3, uint16_t y3, bool fill = false);
     ~Triangle();
 
+    void clear() override;
     void draw() override;
 
 private:

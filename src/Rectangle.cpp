@@ -9,6 +9,17 @@ Rectangle::~Rectangle()
 {
 }
 
+void Rectangle::clear() 
+{
+    LCD->setColor(VGA_BLACK);
+    if (fill)
+        LCD->fillRect(getX(), getY(), getX() + width, getY() + height);
+    else
+        LCD->drawRect(getX(), getY(), getX() + width, getY() + height);
+
+    invalidate();
+}
+
 void Rectangle::draw()
 {
     if (valid || !visible)

@@ -91,7 +91,7 @@ void loadSettingsFrame()
     shapeBtnSettings->add(lineBtnSettingsBottom2);
 
     btnSettings = new Button(&LCD, &Touch, HorizontalAlignment::Right, VerticalAlignment::Center, 16, 15, shapeBtnSettings);
-    // btnSettings->setBorderless(true);
+    btnSettings->setBorderless(true);
     pnlHeader->add(btnSettings);
 
     frmAlarm->add(pnlClock = new Panel(&LCD, 0, pnlHeader->getHeight() + 1, 150, LCD.getDisplayYSize() - pnlHeader->getHeight() - 1));

@@ -12,13 +12,9 @@ GraphicalComponentContainer::~GraphicalComponentContainer()
 
 void GraphicalComponentContainer::draw()
 {
-    // Serial.println("\\_ graphical holder _/");
     if (valid || !visible)
-    {
-        // Serial.println("# && #");
         return;
-    }
-
+    
     for (int i = 0; i < graphics->size(); i++)
         graphics->get(i)->draw();
 
@@ -29,12 +25,14 @@ void GraphicalComponentContainer::clear()
 {
     for (int i = 0; i < graphics->size(); i++)
         graphics->get(i)->clear();
+    
+    invalidate();
 }
 
 void GraphicalComponentContainer::add(GraphicalComponent *graphic)
 {
-    graphics->add(graphic);
     graphic->setParent(this);
+    graphics->add(graphic);
 }
 
 void GraphicalComponentContainer::remove(int index)

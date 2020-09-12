@@ -9,6 +9,14 @@ Line::~Line()
 {
 }
 
+void Line::clear() 
+{
+    LCD->setColor(VGA_BLACK);
+    LCD->drawLine(getX(), getY(), getX() + width, getY() + height);
+
+    invalidate();
+}
+
 void Line::draw()
 {
     if (valid || !visible)

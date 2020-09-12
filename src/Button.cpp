@@ -15,6 +15,8 @@ Button::Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t 
 Button::Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t width, uint16_t height, GraphicalComponent *graphics)
     : AbstractButton(LCD, Touch, x, y, width, height), graphics(graphics)
 {
+    graphics->setParent(this);
+    graphics->updateLayout();
 }
 
 Button::Button(lcd::UTFT *LCD, URTouch *Touch, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height)
@@ -32,6 +34,8 @@ Button::Button(lcd::UTFT *LCD, URTouch *Touch, HorizontalAlignment horizontalAli
 Button::Button(lcd::UTFT *LCD, URTouch *Touch, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height, GraphicalComponent *graphics)
     : AbstractButton(LCD, Touch, horizontalAlignment, verticalAlignment, width, height), graphics(graphics)
 {
+    graphics->setParent(this);
+    graphics->updateLayout();
 }
 
 Button::Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height)
@@ -49,6 +53,8 @@ Button::Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, VerticalAlignment ver
 Button::Button(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height, GraphicalComponent *graphics)
     : AbstractButton(LCD, Touch, x, verticalAlignment, width, height), graphics(graphics)
 {
+    graphics->setParent(this);
+    graphics->updateLayout();
 }
 
 Button::Button(lcd::UTFT *LCD, URTouch *Touch, HorizontalAlignment horizontalAlignment, uint16_t y, uint16_t width, uint16_t height)
@@ -66,6 +72,8 @@ Button::Button(lcd::UTFT *LCD, URTouch *Touch, HorizontalAlignment horizontalAli
 Button::Button(lcd::UTFT *LCD, URTouch *Touch, HorizontalAlignment horizontalAlignment, uint16_t y, uint16_t width, uint16_t height, GraphicalComponent *graphics)
     : AbstractButton(LCD, Touch, horizontalAlignment, y, width, height), graphics(graphics)
 {
+    graphics->setParent(this);
+    graphics->updateLayout();
 }
 
 Button::~Button()
@@ -123,12 +131,13 @@ bool Button::onClick(uint16_t x, uint16_t y)
     if (enable && contains(x, y))
     {
         pressed = true;
-        graphics->setForeground(pressedColor);
+
+        if(graphics != nullptr)
+            graphics->setForeground(pressedColor);
         draw();
 
         Touch->saveStartPressTime();
-        while (Touch->dataAvailable())
-            ;
+        while (Touch->dataAvailable());
         if (Touch->getElapsedTime() < LONG_PRESS)
         {
             if (normalPressAction != nullptr)
@@ -142,7 +151,9 @@ bool Button::onClick(uint16_t x, uint16_t y)
         Touch->resetStartPressTime();
 
         pressed = false;
-        graphics->setForeground(foreground);
+
+        if(graphics != nullptr)
+            graphics->setForeground(foreground);
         draw();
 
         return true;

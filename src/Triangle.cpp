@@ -13,6 +13,17 @@ Triangle::~Triangle()
 {
 }
 
+void Triangle::clear() 
+{
+    LCD->setColor(VGA_BLACK);
+    if (fill)
+        LCD->fillTriangle(x1, y1, x2, y2, x3, y3);
+    else
+        LCD->drawTriangle(x1, y1, x2, y2, x3, y3);
+
+    invalidate();
+}
+
 void Triangle::draw()
 {
     if (valid || !visible)
