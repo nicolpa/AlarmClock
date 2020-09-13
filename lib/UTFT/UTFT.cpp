@@ -721,6 +721,11 @@ void UTFT::fillScr(byte r, byte g, byte b)
 	fillScr(color);
 }
 
+void UTFT::fillScr(Color color) 
+{
+	fillScr(color.red, color.green, color.blue);
+}
+
 void UTFT::fillScr(word color)
 {
 	long i;
@@ -765,6 +770,11 @@ void UTFT::setColor(word color)
 	fcl = byte(color & 0xFF);
 }
 
+void UTFT::setColor(Color color) 
+{
+	setColor(color.red, color.green, color.blue);
+}
+
 word UTFT::getColor()
 {
 	return (fch << 8) | fcl;
@@ -787,6 +797,11 @@ void UTFT::setBackColor(uint32_t color)
 		bcl = byte(color & 0xFF);
 		_transparent = false;
 	}
+}
+
+void UTFT::setBackColor(Color color) 
+{
+	setBackColor(color.red, color.green, color.blue);
 }
 
 word UTFT::getBackColor()

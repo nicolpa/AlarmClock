@@ -319,25 +319,25 @@ void Component::updateLayout()
     invalidate();
 }
 
-void Component::setForeground(word foreground)
+void Component::setForeground(lcd::Color foreground)
 {
     this->foreground = foreground;
     invalidate();
 }
 
-void Component::setBackground(word background)
+void Component::setBackground(lcd::Color background)
 {
     this->background = background;
     invalidate();
 }
 
-void Component::setDisableForeground(word disableForeground)
+void Component::setDisableForeground(lcd::Color disableForeground)
 {
     this->disableForeground = disableForeground;
     invalidate();
 }
 
-void Component::setDisableBackground(word disableForeground)
+void Component::setDisableBackground(lcd::Color disableForeground)
 {
     this->disableBackground = disableBackground;
     invalidate();

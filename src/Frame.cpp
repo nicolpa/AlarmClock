@@ -1,6 +1,6 @@
 #include "Frame.hpp"
 
-Frame::Frame(lcd::UTFT *LCD, word background)
+Frame::Frame(lcd::UTFT *LCD, lcd::Color background)
     : Container(LCD, 0, 0, LCD->getDisplayXSize() - 1, LCD->getDisplayYSize() - 1)
 {
     this->background = background;

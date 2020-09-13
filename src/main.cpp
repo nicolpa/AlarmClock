@@ -92,6 +92,7 @@ void loadSettingsFrame()
 
     btnSettings = new Button(&LCD, &Touch, HorizontalAlignment::Right, VerticalAlignment::Center, 16, 15, shapeBtnSettings);
     btnSettings->setBorderless(true);
+    btnSettings->setContentHighlight(true);
     pnlHeader->add(btnSettings);
 
     frmAlarm->add(pnlClock = new Panel(&LCD, 0, pnlHeader->getHeight() + 1, 150, LCD.getDisplayYSize() - pnlHeader->getHeight() - 1));
@@ -100,12 +101,24 @@ void loadSettingsFrame()
     frmAlarm->add(pnlAlarms = new Panel(&LCD, pnlClock->getWidth(), pnlHeader->getHeight() + 1,
                                         LCD.getDisplayXSize() - pnlClock->getWidth() - 1, LCD.getDisplayYSize() - pnlHeader->getHeight() - btnMenu->getHeight() - 5));
     pnlAlarms->setBorder(false, true, false, false);
-    static Panel *pnlBtnMenu = new Panel(&LCD, pnlAlarms->getX(), pnlAlarms->getY() + pnlAlarms->getHeight(),
+    Panel *pnlBtnMenu = new Panel(&LCD, pnlAlarms->getX(), pnlAlarms->getY() + pnlAlarms->getHeight(),
                                          pnlAlarms->getWidth() - btnMenu->getWidth() - 5, LCD.getDisplayYSize() - pnlAlarms->getHeight() - pnlHeader->getHeight() - 1);
     pnlBtnMenu->add(btnAlarm = new Button(&LCD, &Touch, 0, 0, pnlBtnMenu->getWidth() / 3, pnlBtnMenu->getHeight(), "A", SmallFont));
     pnlBtnMenu->add(btnStopWatch = new Button(&LCD, &Touch, HorizontalAlignment::Center, 0, pnlBtnMenu->getWidth() / 3, pnlBtnMenu->getHeight(), "S", SmallFont));
     pnlBtnMenu->add(btnTimer = new Button(&LCD, &Touch, HorizontalAlignment::Right, 0, pnlBtnMenu->getWidth() / 3, pnlBtnMenu->getHeight(), "T", SmallFont));
     pnlBtnMenu->setBorder(false);
+    btnAlarm->setBorderHighlight(false);
+    btnAlarm->setContentHighlight(true);
+    btnStopWatch->setBorderHighlight(false);
+    btnStopWatch->setContentHighlight(true);
+    btnTimer->setBorderHighlight(false);
+    btnTimer->setContentHighlight(true);
+
+    Line *lnLeft = new Line(&LCD, LCD.getDisplayXSize() - 1, pnlBtnMenu->getY(), LCD.getDisplayXSize() - 1, pnlBtnMenu->getY() + pnlBtnMenu->getHeight() - 1);
+    Line *lnBottom = new Line(&LCD, pnlBtnMenu->getX() + pnlBtnMenu->getWidth(), LCD.getDisplayYSize() - 1,  LCD.getDisplayXSize() - 1, LCD.getDisplayYSize() - 1);
+
+    frmAlarm->add(lnLeft);
+    frmAlarm->add(lnBottom);
 
     frmAlarm->add(pnlBtnMenu);
 
@@ -150,6 +163,7 @@ void setup()
     btnMenu->setGraphics(shapeBtnMenu);
     btnMenu->setBorderless(true);
     btnMenu->setNormalPressAction(&switchFrame);
+    btnMenu->setContentHighlight(true);
 
     loadMainFrame();
     loadSettingsFrame();

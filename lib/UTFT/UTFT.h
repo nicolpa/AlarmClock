@@ -185,39 +185,37 @@ namespace lcd
 		uint8_t numchars;
 	};
 
-	// struct Color
-	// {
-	// 	byte red;
-	// 	byte blue;
-	// 	byte green;
+	struct Color
+	{
+		byte red;
+		byte green;
+		byte blue;
 
-	// 	Color(byte red, byte, byte green, byte blue)
-	// 	{
-	// 		this->red = red;
-	// 		this->green = green;
-	// 		this->blue = blue;
-	// 	}
+		Color(byte red, byte green, byte blue)
+			: red(red), green(green), blue(blue)
+		{
+		}
 
-	// 	bool operator==(const Color& c) const
-	// 	{
-	// 		return red == c.red && green == c.green && blue == c.blue;
-	// 	}
+		bool operator==(const Color& c) const
+		{
+			return red == c.red && green == c.green && blue == c.blue;
+		}
 
-	// 	bool operator!=(const Color& c) const
-	// 	{
-	// 		return red != c.red || green != c.green || blue != c.blue;
-	// 	}
-	// };
+		bool operator!=(const Color& c) const
+		{
+			return red != c.red || green != c.green || blue != c.blue;
+		}
+	};
 
-	// static const lcd::Color
-	// 	GREY(192, 192, 192), DARK_GREY(128, 128, 128), VERY_DARK_GREY(64, 64, 64),
-	// 	RED(255, 0, 0),      DARK_RED(128, 0, 0),      VERY_DARK_RED(64, 0, 0),
-	// 	YELLOW(255, 255, 0), DARK_YELLOW(128, 128, 0), VERY_DARK_YELLOW(64, 64, 0),
-	// 	GREEN(0, 255, 0),    DARK_GREEN(0, 128, 0),    VERY_DARK_GREEN(0, 64, 0),
-	// 	CYAN(0, 255, 255),   DARK_CYAN(0, 128, 128),   VERY_DARK_CYAN(0, 64, 64),
-	// 	BLUE(0, 0, 255),     DARK_BLUE(0, 0, 128),     VERY_DARK_BLUE(0, 0, 64),
-	// 	MAGENTA(255, 0, 255),DARK_MAGENTA(128, 0, 128),VERY_DARK_MAGENTA(64, 0, 64),
-	// 	WHITE(255, 255, 255),BLACK(0, 0, 0);
+	static const Color
+		GREY(192, 192, 192), DARK_GREY(128, 128, 128), VERY_DARK_GREY(64, 64, 64),
+		RED(255, 0, 0),      DARK_RED(128, 0, 0),      VERY_DARK_RED(64, 0, 0),
+		YELLOW(255, 255, 0), DARK_YELLOW(128, 128, 0), VERY_DARK_YELLOW(64, 64, 0),
+		GREEN(0, 255, 0),    DARK_GREEN(0, 128, 0),    VERY_DARK_GREEN(0, 64, 0),
+		CYAN(0, 255, 255),   DARK_CYAN(0, 128, 128),   VERY_DARK_CYAN(0, 64, 64),
+		BLUE(0, 0, 255),     DARK_BLUE(0, 0, 128),     VERY_DARK_BLUE(0, 0, 64),
+		MAGENTA(255, 0, 255),DARK_MAGENTA(128, 0, 128),VERY_DARK_MAGENTA(64, 0, 64),
+		WHITE(255, 255, 255),BLACK(0, 0, 0);
 
 	class UTFT
 	{
@@ -236,6 +234,7 @@ namespace lcd
 		void drawLine(int x1, int y1, int x2, int y2);
 		void fillScr(byte r, byte g, byte b);
 		void fillScr(word color);
+		void fillScr(Color color);
 		void drawRect(int x1, int y1, int x2, int y2);
 		void drawRoundRect(int x1, int y1, int x2, int y2);
 		void fillRect(int x1, int y1, int x2, int y2);
@@ -246,9 +245,11 @@ namespace lcd
 		void fillTriangle(int x1, int y1, int x2, int y2, int x3, int y3);
 		void setColor(byte r, byte g, byte b);
 		void setColor(word color);
+		void setColor(Color color);
 		word getColor();
 		void setBackColor(byte r, byte g, byte b);
 		void setBackColor(uint32_t color);
+		void setBackColor(Color color);
 		word getBackColor();
 		void print(char *st, int x, int y, int deg = 0);
 		void print(String st, int x, int y, int deg = 0);

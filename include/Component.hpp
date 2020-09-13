@@ -214,10 +214,10 @@ public:
 
     virtual void updateLayout();
 
-    virtual void setForeground(word foreground);
-    virtual void setBackground(word background);
-    virtual void setDisableForeground(word disableForeground);
-    virtual void setDisableBackground(word disableForeground);
+    virtual void setForeground(lcd::Color foreground);
+    virtual void setBackground(lcd::Color background);
+    virtual void setDisableForeground(lcd::Color disableForeground);
+    virtual void setDisableBackground(lcd::Color disableForeground);
     void setTransparent(bool transparent);
 
     virtual void validate();
@@ -270,22 +270,22 @@ protected:
     /**
      * The foreground color of the component
      */
-    word foreground = VGA_WHITE;
+    lcd::Color foreground = lcd::WHITE;
 
     /**
      * The backgroundColor of the component
      */
-    word background = VGA_BLACK;
+    lcd::Color background = lcd::BLACK;
 
     /**
      * The foreground color of the component when disabled
      */
-    word disableForeground = VGA_GRAY;
+    lcd::Color disableForeground = lcd::GREY;
 
     /**
      * The backgroundColor of the component when disabled
      */
-    word disableBackground = VGA_BLACK;
+    lcd::Color disableBackground = lcd::BLACK;
 
     /**
      * The default font used in the component

@@ -90,9 +90,14 @@ bool Button::getBorderless()
     return borderless;
 }
 
-bool Button::getTextHighlight()
+bool Button::getContentHighlight() 
 {
-    return textHighlight;
+    return contentHighlight;
+}
+
+bool Button::getBorderHighlight() 
+{
+    return borderHighlight;
 }
 
 void Button::draw()
@@ -102,25 +107,46 @@ void Button::draw()
 
     if (!enable)
         LCD->setColor(VGA_GRAY);
+        
     if (!borderless)
     {
         LCD->setColor(background);
         LCD->fillRect(getX() + 1, getY() + 1, getX() + width - 1, getY() + height - 1);
 
-        LCD->setColor((pressed) ? pressedColor : foreground);
+        LCD->setColor((pressed && borderHighlight) ? pressedColor : foreground);
         LCD->drawRect(getX(), getY(), getX() + width, getY() + height);
     }
+    else
+    {
+        LCD->setColor((enable) ? background : disableBackground);
+        LCD->fillRect(getX(), getY(), getX() + width, getY() + height);
+    }
+    
 
-    LCD->setFont(font);
-
-    int x = ceil(getX() + (width / 2.0f) - (text.length() * LCD->getFontXsize()) / 2.0f);
-    int y = ceil(getY() + (height / 2.0f) - LCD->getFontYsize() / 2.0f);
-
-    if (!textHighlight)
+    if (contentHighlight && pressed)
+    {
+        LCD->setColor(pressedColor);
+        if(graphics != nullptr)
+            graphics->setForeground(pressedColor);
+    }
+    else
+    {
         LCD->setColor(foreground);
+        if(graphics != nullptr)
+            graphics->setForeground(foreground);
+    }
+
     if (text != "")
+    {
+        LCD->setFont(font);
+
+        int x = ceil(getX() + (width / 2.0f) - (text.length() * LCD->getFontXsize()) / 2.0f);
+        int y = ceil(getY() + (height / 2.0f) - LCD->getFontYsize() / 2.0f);
+
         LCD->print(text, x, y);
-    else if (graphics != nullptr)
+    }
+
+    if (graphics != nullptr)
         graphics->draw();
 
     valid = true;
@@ -131,9 +157,7 @@ bool Button::onClick(uint16_t x, uint16_t y)
     if (enable && contains(x, y))
     {
         pressed = true;
-
-        if(graphics != nullptr)
-            graphics->setForeground(pressedColor);
+        valid = false;
         draw();
 
         Touch->saveStartPressTime();
@@ -151,9 +175,7 @@ bool Button::onClick(uint16_t x, uint16_t y)
         Touch->resetStartPressTime();
 
         pressed = false;
-
-        if(graphics != nullptr)
-            graphics->setForeground(foreground);
+        valid = false;
         draw();
 
         return true;
@@ -168,7 +190,12 @@ void Button::setGraphics(GraphicalComponent *graphics)
     graphics->setParent(this);
 }
 
-void Button::setTextHighlight(bool textHightlight)
+void Button::setContentHighlight(bool contentHighlight) 
 {
-    this->textHighlight = textHighlight;
+    this->contentHighlight = contentHighlight;
+}
+
+void Button::setBorderHighlight(bool borderHighlight) 
+{
+    this->borderHighlight = borderHighlight;
 }

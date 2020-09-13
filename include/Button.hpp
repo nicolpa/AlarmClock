@@ -37,7 +37,9 @@ public:
      */
     bool getBorderless();
 
-    bool getTextHighlight();
+    bool getContentHighlight();
+
+    bool getBorderHighlight();
 
     void draw() override;
 
@@ -45,13 +47,15 @@ public:
 
     void setGraphics(GraphicalComponent *graphics);
 
-    void setTextHighlight(bool textHightlight);
+    void setContentHighlight(bool contentHighlight);
+
+    void setBorderHighlight(bool borderHighlight);
 
 private:
     /**
      * The outline color used when the button is pressed
      */
-    word pressedColor = VGA_GREEN;
+    lcd::Color pressedColor = lcd::GREEN;
 
     /**
      * Whether or not the button display a border
@@ -61,7 +65,9 @@ private:
     /**
      * Change the text color when pressed
      */
-    bool textHighlight = false;
+    bool contentHighlight = false;
+
+    bool borderHighlight = true;
 
     GraphicalComponent *graphics = nullptr;
 };

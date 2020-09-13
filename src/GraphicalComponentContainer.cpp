@@ -45,13 +45,13 @@ GraphicalComponent *GraphicalComponentContainer::get(int index)
     return graphics->get(index);
 }
 
-void GraphicalComponentContainer::setForeground(word foreground)
+void GraphicalComponentContainer::setForeground(lcd::Color foreground)
 {
     for (int i = 0; i < graphics->size(); i++)
         graphics->get(i)->setForeground(foreground);
 }
 
-void GraphicalComponentContainer::setDisableForeground(word disableForeground)
+void GraphicalComponentContainer::setDisableForeground(lcd::Color disableForeground)
 {
     for (int i = 0; i < graphics->size(); i++)
         graphics->get(i)->setDisableForeground(disableBackground);

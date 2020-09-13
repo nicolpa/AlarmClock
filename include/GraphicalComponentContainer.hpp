@@ -16,8 +16,8 @@ public:
     void remove(int index);
     GraphicalComponent *get(int index);
 
-    void setForeground(word foreground) override;
-    void setDisableForeground(word disableForeground) override;
+    void setForeground(lcd::Color foreground) override;
+    void setDisableForeground(lcd::Color disableForeground) override;
 
 private:
     LinkedPointerList<GraphicalComponent> *graphics;
