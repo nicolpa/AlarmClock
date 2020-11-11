@@ -39,12 +39,12 @@ void RadioButton::draw()
     valid = true;
 }
 
-bool RadioButton::onClick(uint16_t x, uint16_t y)
+Component *RadioButton::onClick(uint16_t x, uint16_t y)
 {
     if (!selected)
         return ToggleButton::onClick(x, y);
 
-    return false;
+    return nullptr;
 }
 
 void RadioButton::update()

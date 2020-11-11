@@ -14,7 +14,7 @@ public:
 
     void draw() override;
 
-    bool onClick(uint16_t x, uint16_t y) override;
+    Component *onClick(uint16_t x, uint16_t y) override;
 
 protected:
     void update() override;

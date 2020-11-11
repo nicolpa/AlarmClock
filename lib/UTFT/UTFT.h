@@ -190,20 +190,21 @@ namespace lcd
 		byte red;
 		byte green;
 		byte blue;
+		bool transparent;
 
-		Color(byte red, byte green, byte blue)
-			: red(red), green(green), blue(blue)
+		Color(byte red, byte green, byte blue, bool transparent = 0)
+			: red(red), green(green), blue(blue), transparent(transparent)
 		{
 		}
 
 		bool operator==(const Color& c) const
 		{
-			return red == c.red && green == c.green && blue == c.blue;
+			return red == c.red && green == c.green && blue == c.blue && transparent == c.transparent;
 		}
 
 		bool operator!=(const Color& c) const
 		{
-			return red != c.red || green != c.green || blue != c.blue;
+			return red != c.red || green != c.green || blue != c.blue || transparent != c.transparent;
 		}
 	};
 
@@ -215,7 +216,7 @@ namespace lcd
 		CYAN(0, 255, 255),   DARK_CYAN(0, 128, 128),   VERY_DARK_CYAN(0, 64, 64),
 		BLUE(0, 0, 255),     DARK_BLUE(0, 0, 128),     VERY_DARK_BLUE(0, 0, 64),
 		MAGENTA(255, 0, 255),DARK_MAGENTA(128, 0, 128),VERY_DARK_MAGENTA(64, 0, 64),
-		WHITE(255, 255, 255),BLACK(0, 0, 0);
+		WHITE(255, 255, 255),BLACK(0, 0, 0), TRANSPARENT(0, 0, 0, 1);
 
 	class UTFT
 	{
@@ -266,7 +267,7 @@ namespace lcd
 		void setContrast(char c);
 		int getDisplayXSize();
 		int getDisplayYSize();
-		void setBrightness(byte br);
+		void setBrightness(byte br, bool fade = false);
 		void setDisplayPage(byte page);
 		void setWritePage(byte page);
 

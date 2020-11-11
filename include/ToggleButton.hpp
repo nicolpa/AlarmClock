@@ -12,7 +12,7 @@ public:
     ToggleButton(lcd::UTFT *LCD, URTouch *Touch, HorizontalAlignment horizontalAlignment, uint16_t y, String label, uint8_t *font);
     virtual ~ToggleButton();
 
-    bool onClick(uint16_t x, uint16_t y) override;
+    Component * onClick(uint16_t x, uint16_t y) override;
 
     /**
      * Return whether or not the button is selected

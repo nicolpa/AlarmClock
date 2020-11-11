@@ -90,12 +90,12 @@ bool Button::getBorderless()
     return borderless;
 }
 
-bool Button::getContentHighlight() 
+bool Button::getContentHighlight()
 {
     return contentHighlight;
 }
 
-bool Button::getBorderHighlight() 
+bool Button::getBorderHighlight()
 {
     return borderHighlight;
 }
@@ -107,7 +107,7 @@ void Button::draw()
 
     if (!enable)
         LCD->setColor(VGA_GRAY);
-        
+
     if (!borderless)
     {
         LCD->setColor(background);
@@ -121,18 +121,17 @@ void Button::draw()
         LCD->setColor((enable) ? background : disableBackground);
         LCD->fillRect(getX(), getY(), getX() + width, getY() + height);
     }
-    
 
     if (contentHighlight && pressed)
     {
         LCD->setColor(pressedColor);
-        if(graphics != nullptr)
+        if (graphics != nullptr)
             graphics->setForeground(pressedColor);
     }
     else
     {
         LCD->setColor(foreground);
-        if(graphics != nullptr)
+        if (graphics != nullptr)
             graphics->setForeground(foreground);
     }
 
@@ -140,8 +139,40 @@ void Button::draw()
     {
         LCD->setFont(font);
 
-        int x = ceil(getX() + (width / 2.0f) - (text.length() * LCD->getFontXsize()) / 2.0f);
-        int y = ceil(getY() + (height / 2.0f) - LCD->getFontYsize() / 2.0f);
+        int x, y;
+
+        switch (contentVerticalAlignment)
+        {
+        case VerticalAlignment::Down:
+            y = getY() + height - LCD->getFontYsize() - 1;
+            break;
+        case VerticalAlignment::Up:
+            y = getY() - 1;
+            break;
+        case VerticalAlignment::Center:
+        case VerticalAlignment::None:
+        default:
+            y = ceil(getY() + (height / 2.0f) - LCD->getFontYsize() / 2.0f);
+            break;
+        }
+
+        switch (contentHorizontalAlignment)
+        {
+        case HorizontalAlignment::Left:
+            x = getX() + 1;
+            // Serial.println("left");
+            break;
+        case HorizontalAlignment::Right:
+            x = getX() + width - (text.length() * LCD->getFontXsize()) - 1;
+            // Serial.println("right");
+            break;
+        case HorizontalAlignment::Center:
+        case HorizontalAlignment::None:
+        default:
+            // Serial.println("Center");
+            x = ceil(getX() + (width / 2.0f) - (text.length() * LCD->getFontXsize()) / 2.0f);
+            break;
+        }
 
         LCD->print(text, x, y);
     }
@@ -152,36 +183,33 @@ void Button::draw()
     valid = true;
 }
 
-bool Button::onClick(uint16_t x, uint16_t y)
+Component *Button::onClick(uint16_t x, uint16_t y)
 {
-    if (enable && contains(x, y))
+    if (enable && clickable && contains(x, y))
     {
-        pressed = true;
-        valid = false;
-        draw();
-
-        Touch->saveStartPressTime();
-        while (Touch->dataAvailable());
-        if (Touch->getElapsedTime() < LONG_PRESS)
+        if(!focus)
         {
-            if (normalPressAction != nullptr)
-                normalPressAction();
-        }
-        else
-        {
-            if (longPressAction != nullptr)
-                longPressAction();
-        }
-        Touch->resetStartPressTime();
+            pressed = true;
+            valid = false;
+            draw();
+            focus = true;
 
-        pressed = false;
-        valid = false;
-        draw();
+            Touch->saveStartPressTime();
+        }
 
-        return true;
+
+        return this;
     }
 
-    return false;
+    return nullptr;
+}
+
+void Button::onRelease(uint16_t x, uint16_t y)
+{
+    Component::onRelease(x, y);
+    pressed = false;
+    valid = false;
+    draw();
 }
 
 void Button::setGraphics(GraphicalComponent *graphics)
@@ -190,12 +218,26 @@ void Button::setGraphics(GraphicalComponent *graphics)
     graphics->setParent(this);
 }
 
-void Button::setContentHighlight(bool contentHighlight) 
+void Button::setContentHighlight(bool contentHighlight)
 {
     this->contentHighlight = contentHighlight;
 }
 
-void Button::setBorderHighlight(bool borderHighlight) 
+void Button::setBorderHighlight(bool borderHighlight)
 {
     this->borderHighlight = borderHighlight;
+}
+
+void Button::setContentVerticalAlignment(VerticalAlignment contentVerticalAlignment)
+{
+    this->contentVerticalAlignment = contentVerticalAlignment;
+    if(graphics != nullptr)
+        graphics->setVerticalAlignment(contentVerticalAlignment);
+}
+
+void Button::setContentHorizontalAligment(HorizontalAlignment contentHorizontalAlignment)
+{
+    this->contentHorizontalAlignment = contentHorizontalAlignment;
+    if(graphics != nullptr)
+        graphics->setHorizontalAlignment(contentHorizontalAlignment);
 }

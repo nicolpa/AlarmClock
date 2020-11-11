@@ -1397,10 +1397,25 @@ int UTFT::getDisplayYSize()
 		return disp_x_size + 1;
 }
 
-void UTFT::setBrightness(byte br)
+void UTFT::setBrightness(byte br, bool fade)
 {
+	if (this->doFade)
+	{
+		float brakeTime = this->fadeTime / this->brightness;
+
+		for (byte br = this->brightness; br > 0; br--)
+		{
+			br--;
+			analogWrite(BACKLIGHT_PIN, br);
+			delay(brakeTime);
+		}
+	}
+	else
+	{
+		// digitalWrite(BACKLIGHT_PIN, LOW);
+		analogWrite(BACKLIGHT_PIN, br);
+	}
 	this->brightness = br;
-	analogWrite(BACKLIGHT_PIN, this->brightness);
 }
 
 byte UTFT::getBrightness()

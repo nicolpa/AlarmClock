@@ -6,10 +6,10 @@ class Panel : public Container
 {
 
 public:
-    Panel(lcd::UTFT* LCD, uint16_t x, uint16_t y, uint16_t width, uint16_t height, word borderColor = VGA_WHITE);
-    Panel(lcd::UTFT* LCD, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height, word borderColor = VGA_WHITE);
-    Panel(lcd::UTFT* LCD, uint16_t x, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height, word borderColor = VGA_WHITE);
-    Panel(lcd::UTFT* LCD, HorizontalAlignment horizontalAlignment, uint16_t y, uint16_t width, uint16_t height, word borderColor = VGA_WHITE);
+    Panel(lcd::UTFT* LCD, uint16_t x, uint16_t y, uint16_t width, uint16_t height, lcd::Color borderColor = lcd::WHITE);
+    Panel(lcd::UTFT* LCD, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height, lcd::Color borderColor = lcd::WHITE);
+    Panel(lcd::UTFT* LCD, uint16_t x, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height, lcd::Color borderColor = lcd::WHITE);
+    Panel(lcd::UTFT* LCD, HorizontalAlignment horizontalAlignment, uint16_t y, uint16_t width, uint16_t height, lcd::Color borderColor = lcd::WHITE);
     ~Panel();
 
     void clear() override;
@@ -31,7 +31,7 @@ public:
     void setBorder(bool borders);
 
 private:
-    word borderColor;
+    lcd::Color borderColor = lcd::WHITE;
 
     bool borderTop      = true;
     bool borderBottom   = true;

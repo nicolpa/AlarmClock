@@ -80,13 +80,13 @@ void VirtualKeyboard::draw()
     valid = true;
 }
 
-bool VirtualKeyboard::onClick(uint16_t x, uint16_t y)
+Component *VirtualKeyboard::onClick(uint16_t x, uint16_t y)
 {
     if (Component::contains(x, y))
     {
         for (int i = 0; i < 34; i++)
         {
-            if (buttons[i]->onClick(x, y))
+            if (buttons[i]->onClick(x, y) != nullptr)
             {
                 if (i < 30)
                 {
@@ -162,9 +162,9 @@ bool VirtualKeyboard::onClick(uint16_t x, uint16_t y)
                     notify('\n');
             }
         }
-        return true;
+        return this;
     }
-    return false;
+    return nullptr;
 }
 
 void VirtualKeyboard::subscribeComponent(TextArea *component)

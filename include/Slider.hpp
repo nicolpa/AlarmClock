@@ -21,7 +21,9 @@ public:
 
     void draw() override;
 
-    bool onClick(uint16_t x, uint16_t y) override;
+    Component * onClick(uint16_t x, uint16_t y) override;
+
+    void onRelease(uint16_t x, uint16_t y) override;
 
     /**
      * Return the minimum value of the slider
@@ -106,7 +108,7 @@ public:
     void increaseValueBy(int amount);
 
 private:
-    word fillColor;
+    lcd::Color fillColor;
 
     uint16_t length;
 
@@ -129,6 +131,8 @@ private:
      * The current value of the slider
      */
     int value = 0;
+
+    int previousValue = minimum;
 
     /**
      * Whether the slider show the ticks

@@ -38,20 +38,67 @@ void switchFrame()
 {
     currentFrame->clear();
     if (currentFrame == frmMain)
-    {
         currentFrame = frmAlarm;
+    else
+        currentFrame = frmMain;
+}
+
+void goToSettingsAndBack()
+{
+    currentFrame->clear();
+    if(currentFrame == frmAlarm)
+        currentFrame = frmSettings;
+    else
+        currentFrame = frmAlarm;
+}
+
+void sleep()
+{
+    Serial.println("Sleep");
+    static bool sleep = false;
+    if(sleep)
+    {
+        LCD.lcdOn();
+        sleep = false;
     }
     else
     {
-        currentFrame = frmMain;
+        LCD.lcdOff();
+        sleep = true;
     }
+    
+    // while(!Touch.dataAvailable());
+}
+
+void cycleBrightness()
+{
+    Serial.println("Cycle");
+    static byte level = 100;
+    switch (level)
+    {
+    case 100:
+        level = 10;
+        break;
+    case 75:
+        level = 100;
+        break;
+    case 25:
+        level = 75;
+        break;
+    case 10:
+    default:
+        level = 25;
+        break;
+    }
+
+    LCD.setBrightness(map(level, 0, 100, 0, 255), true);
 }
 
 void loadMainFrame()
 {
     frmMain = new Frame(&LCD);
-    frmMain->add(lblDOW = new Label(&LCD, HorizontalAlignment::Left, 2, rtc.getDOWStr(), SmallFont));
-    frmMain->add(lblDate = new Label(&LCD, HorizontalAlignment::Left, 15, rtc.getDateStr(), SmallFont));
+    frmMain->add(lblDOW = new Label(&LCD, 2, 2, rtc.getDOWStr(), SmallFont));
+    frmMain->add(lblDate = new Label(&LCD, 2, 15, rtc.getDateStr(), SmallFont));
     frmMain->add(lblClockMain = new Label(&LCD, HorizontalAlignment::Center, VerticalAlignment::Center, rtc.getTimeStr(), SevenSegNumFontPlus));
 
     Panel *pnlTemp = new Panel(&LCD, HorizontalAlignment::Right, VerticalAlignment::Up, 57, 12);
@@ -62,15 +109,19 @@ void loadMainFrame()
     frmMain->add(pnlTemp);
 
     frmMain->add(btnMenu);
+
+    // frmMain->setClickable(true);
+    // frmMain->setNormalPressAction(&sleep);
+    // frmMain->setLongPressAction(&cycleBrightness);
 }
 
-void loadSettingsFrame()
+void loadAlarmFrame()
 {
     frmAlarm = new Frame(&LCD);
 
     Panel *pnlHeader = new Panel(&LCD, 0, 0, LCD.getDisplayXSize() - 1, 20);
     pnlHeader->setBorder(false, true, false, false);
-    pnlHeader->add(new Label(&LCD, 0, VerticalAlignment::Center, "Alarm", SmallFont));
+    pnlHeader->add(new Label(&LCD, 2, VerticalAlignment::Center, "Alarm", SmallFont));
     frmAlarm->add(pnlHeader);
 
     Line *lineBtnSettingsTop = new Line(&LCD, 2, 2, 14, 2);
@@ -93,6 +144,7 @@ void loadSettingsFrame()
     btnSettings = new Button(&LCD, &Touch, HorizontalAlignment::Right, VerticalAlignment::Center, 16, 15, shapeBtnSettings);
     btnSettings->setBorderless(true);
     btnSettings->setContentHighlight(true);
+    btnSettings->setNormalPressAction(&goToSettingsAndBack);
     pnlHeader->add(btnSettings);
 
     frmAlarm->add(pnlClock = new Panel(&LCD, 0, pnlHeader->getHeight() + 1, 150, LCD.getDisplayYSize() - pnlHeader->getHeight() - 1));
@@ -137,6 +189,83 @@ void loadSettingsFrame()
     frmAlarm->add(btnMenu);
 }
 
+void loadSettingsFrame()
+{
+    frmSettings = new Frame(&LCD);
+
+    Panel *pnlHeader = new Panel(&LCD, 0, 0, LCD.getDisplayXSize() - 1, 20);
+    pnlHeader->setBorder(false, true, false, false);
+    pnlHeader->add(new Label(&LCD, 2, VerticalAlignment::Center, "Settings", SmallFont));
+    Button *btnBack = new Button(&LCD, &Touch, HorizontalAlignment::Right, VerticalAlignment::Center, 16, 16);
+    GraphicalComponentContainer *gBack = new GraphicalComponentContainer();
+    gBack->add(new Line(&LCD, 2, btnBack->getHeight() / 2, btnBack->getWidth() / 2, 2));
+    gBack->add(new Line(&LCD, 2, btnBack->getHeight() / 2, btnBack->getWidth() / 2, btnBack->getHeight() - 2));
+    btnBack->setGraphics(gBack);
+    btnBack->setNormalPressAction(&goToSettingsAndBack);
+    btnBack->setBorderless(true);
+    btnBack->setContentHighlight(true);
+    pnlHeader->add(btnBack);
+
+    Panel *pnlSettingsMenu = new Panel(&LCD, 0,  pnlHeader->getHeight() + 1, 125, LCD.getDisplayYSize() - pnlHeader->getHeight() - 1);
+    pnlSettingsMenu->setBorder(false);
+    Panel *pnlSettingsOption = new Panel(&LCD, pnlSettingsMenu->getWidth(), pnlSettingsMenu->getY(), LCD.getDisplayXSize() - pnlSettingsMenu->getWidth() - 1, LCD.getDisplayYSize() - pnlHeader->getHeight() - 1);
+    pnlSettingsOption->setBorder(false);
+
+    byte nSettigns = 5;
+
+    Button *btnTimeAndDate = new Button(&LCD, &Touch, 
+                                        HorizontalAlignment::Center, 0,
+                                        pnlSettingsMenu->getWidth(), (pnlSettingsMenu->getHeight() / nSettigns), 
+                                        "Time and Date", SmallFont);
+    // btnTimeAndDate->setBorderless(true);
+    btnTimeAndDate->setHorizontalAlignment(HorizontalAlignment::Left);
+    btnTimeAndDate->setContentHighlight(true);
+    pnlSettingsMenu->add(btnTimeAndDate);
+
+    Button *btnSoundVolume = new Button(&LCD, &Touch,
+                                        HorizontalAlignment::Center, btnTimeAndDate->getHeight(), 
+                                        pnlSettingsMenu->getWidth(), (pnlSettingsMenu->getHeight() / nSettigns), 
+                                        "Sound", SmallFont);
+    // btnSoundVolume->setBorderless(true);
+    btnSoundVolume->setHorizontalAlignment(HorizontalAlignment::Left);
+    btnSoundVolume->setContentHighlight(true);
+    pnlSettingsMenu->add(btnSoundVolume);
+
+    Button *btnSleepSchedule = new Button(&LCD, &Touch, 
+                                          HorizontalAlignment::Center, btnSoundVolume->getY(false) + btnSoundVolume->getHeight(), 
+                                          pnlSettingsMenu->getWidth(), (pnlSettingsMenu->getHeight() / nSettigns), 
+                                          "Sleep Schedule", SmallFont);
+    // btnSleepSchedule->setBorderless(true);
+    btnSleepSchedule->setHorizontalAlignment(HorizontalAlignment::Left);
+    btnSleepSchedule->setContentHighlight(true);
+    pnlSettingsMenu->add(btnSleepSchedule);
+
+    Button *btnBrightness = new Button(&LCD, &Touch,
+                                       HorizontalAlignment::Center, btnSleepSchedule->getY(false) + btnSleepSchedule->getHeight(), 
+                                       pnlSettingsMenu->getWidth(), (pnlSettingsMenu->getHeight() / nSettigns), 
+                                       "Brightness", SmallFont);
+    // btnBrightness->setBorderless(true);
+    btnBrightness->setHorizontalAlignment(HorizontalAlignment::Left);
+    btnBrightness->setContentHighlight(true);
+    pnlSettingsMenu->add(btnBrightness);
+
+    Button *btnGentleWake = new Button(&LCD, &Touch, 
+                                       HorizontalAlignment::Center, btnBrightness->getY(false) + btnBrightness->getHeight(), 
+                                       pnlSettingsMenu->getWidth(), (pnlSettingsMenu->getHeight() / nSettigns), 
+                                       "Gentle Wake", SmallFont);
+    // btnGentleWake->setBorderless(true);
+    btnGentleWake->setHorizontalAlignment(HorizontalAlignment::Left);
+    btnGentleWake->setContentHighlight(true);
+    pnlSettingsMenu->add(btnGentleWake);
+
+    // for(int i = 1; i < nSettigns; i++)
+    //     pnlSettingsMenu->add(new Line(&LCD, 7, (pnlSettingsOption->getHeight() / nSettigns) * i, pnlSettingsMenu->getWidth() - 15, (pnlSettingsOption->getHeight() / nSettigns) * i));
+
+    frmSettings->add(pnlHeader);
+    frmSettings->add(pnlSettingsMenu);
+    frmSettings->add(pnlSettingsOption);
+}
+
 void setup()
 {
     Serial.begin(9600);
@@ -166,9 +295,24 @@ void setup()
     btnMenu->setContentHighlight(true);
 
     loadMainFrame();
+    loadAlarmFrame();
     loadSettingsFrame();
 
     currentFrame = frmMain;
+
+    Slider *sl = new Slider(&LCD, &Touch, 10, frmMain->getHeight() - 20, 100);
+    sl->setTickSpacing(10);
+    sl->setShowTicks(true);
+    sl->setSnapToTicks(true);
+    sl->setValue(50);
+    frmMain->add(sl);
+
+    Slider *sl2 = new Slider(&LCD, &Touch, 10, frmMain->getHeight() - 150, 100, Orientation::VERTICAL);
+    sl2->setTickSpacing(10);
+    sl2->setShowTicks(true);
+    sl2->setSnapToTicks(true);
+    sl2->setValue(50);
+    frmMain->add(sl2);
 }
 
 void loop()
@@ -191,9 +335,28 @@ void loop()
         time = rtc.getTime();
     }
 
-    if (Touch.dataAvailable())
+    static Component *currentlyClickedOn = nullptr;
+    static int x, y;
+
+    if(Touch.dataAvailable())
     {
         Touch.read();
-        currentFrame->onClick(Touch.getX(), Touch.getY());
+        x = Touch.getX();
+        y = Touch.getY();
+
+        Component *tmpComponentClickedOn = currentFrame->onClick(x, y);
+
+        if(tmpComponentClickedOn != currentlyClickedOn)
+        {
+            if(currentlyClickedOn != nullptr)
+                currentlyClickedOn->onRelease(x, y);
+            
+            currentlyClickedOn = tmpComponentClickedOn;
+        }
+    }
+    else if(currentlyClickedOn != nullptr)
+    {
+        currentlyClickedOn->onRelease(x, y);
+        currentlyClickedOn = nullptr;
     }
 }

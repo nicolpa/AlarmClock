@@ -62,7 +62,7 @@ ToggleButton::ToggleButton(lcd::UTFT *LCD, URTouch *Touch, HorizontalAlignment h
 
 ToggleButton::~ToggleButton() {}
 
-bool ToggleButton::onClick(uint16_t x, uint16_t y)
+Component *ToggleButton::onClick(uint16_t x, uint16_t y)
 {
     if (contains(x, y))
     {
@@ -70,10 +70,10 @@ bool ToggleButton::onClick(uint16_t x, uint16_t y)
             ;
         toggle();
         update();
-        return true;
+        return this;
     }
 
-    return false;
+    return nullptr;
 }
 
 bool ToggleButton::isSelected()

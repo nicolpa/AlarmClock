@@ -1,21 +1,21 @@
 #include "Panel.hpp"
 
-Panel::Panel(lcd::UTFT *LCD, uint16_t x, uint16_t y, uint16_t width, uint16_t height, word borderColor)
+Panel::Panel(lcd::UTFT *LCD, uint16_t x, uint16_t y, uint16_t width, uint16_t height, lcd::Color borderColor)
     : Container(LCD, x, y, width, height), borderColor(borderColor)
 {
 }
 
-Panel::Panel(lcd::UTFT *LCD, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height, word borderColor)
+Panel::Panel(lcd::UTFT *LCD, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height, lcd::Color borderColor)
     : Container(LCD, horizontalAlignment, verticalAlignment, width, height)
 {
 }
 
-Panel::Panel(lcd::UTFT *LCD, uint16_t x, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height, word borderColor)
+Panel::Panel(lcd::UTFT *LCD, uint16_t x, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height, lcd::Color borderColor)
     : Container(LCD, x, verticalAlignment, width, height)
 {
 }
 
-Panel::Panel(lcd::UTFT *LCD, HorizontalAlignment horizontalAlignment, uint16_t y, uint16_t width, uint16_t height, word borderColor)
+Panel::Panel(lcd::UTFT *LCD, HorizontalAlignment horizontalAlignment, uint16_t y, uint16_t width, uint16_t height, lcd::Color borderColor)
     : Container(LCD, horizontalAlignment, y, width, height)
 {
 }

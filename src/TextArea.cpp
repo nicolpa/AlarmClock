@@ -42,7 +42,7 @@ void TextArea::draw()
     valid = true;
 }
 
-bool TextArea::onClick(uint16_t x, uint16_t y)
+Component *TextArea::onClick(uint16_t x, uint16_t y)
 {
     while (Touch->dataAvailable())
         ;
@@ -55,20 +55,20 @@ bool TextArea::onClick(uint16_t x, uint16_t y)
 
         focus = (focus) ? false : true;
 
-        return true;
+        return this;
     }
 
     if (focus)
     {
         if (keyboard->onClick(x, y))
-            return true;
+            return this;
         else
             keyboard->clear();
 
         focus = false;
     }
 
-    return false;
+    return nullptr;
 }
 
 String TextArea::getText()

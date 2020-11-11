@@ -61,31 +61,42 @@ void Component::clear()
     invalidate();
 }
 
-bool Component::onClick(uint16_t x, uint16_t y)
+Component *Component::onClick(uint16_t x, uint16_t y)
 {
-    if (enable && contains(x, y))
+    if (enable && clickable && contains(x, y))
     {
-        focus = true;
-        if (Touch != nullptr)
+        if(!focus)
         {
-            Touch->saveStartPressTime();
-            while (Touch->dataAvailable())
-                ;
-            if (Touch->getElapsedTime() < LONG_PRESS)
-                if (normalPressAction != nullptr)
-                    normalPressAction();
-                else if (longPressAction != nullptr)
-                    longPressAction();
-            Touch->resetStartPressTime();
+            if (Touch != nullptr)
+                Touch->saveStartPressTime();
+
+            focus = true;
         }
 
-        return true;
+        return this;
     }
-    else
+
+    return nullptr;
+}
+
+void Component::onRelease(uint16_t x, uint16_t y) 
+{
+    if(contains(x, y) && Touch != nullptr)
     {
-        focus = false;
-        return false;
+        if (Touch->getElapsedTime() < LONG_PRESS)
+        {
+            if (normalPressAction != nullptr)
+                normalPressAction();
+        }
+        else
+        {
+            if (longPressAction != nullptr)
+                longPressAction();
+        }
     }
+
+    focus = false;
+    Touch->resetStartPressTime();
 }
 
 bool Component::isShowing()
@@ -362,9 +373,42 @@ void Component::invalidate()
         parent->invalidate();
 }
 
-void Component::print()
+lcd::Color Component::getForeground() 
 {
-    Serial.println("Yup");
+    if(foreground == lcd::TRANSPARENT)
+        return (parent == nullptr) ? lcd::BLACK : parent->getForeground();
+    return foreground;
+}
+
+lcd::Color Component::getBackground() 
+{
+    if(background == lcd::TRANSPARENT)
+        return (parent == nullptr) ? lcd::BLACK : parent->getBackground();
+    return background;
+}
+
+lcd::Color Component::getDisableForeground() 
+{
+    if(disableForeground == lcd::TRANSPARENT)
+        return (parent == nullptr) ? lcd::BLACK : parent->getDisableForeground();
+    return disableForeground;
+}
+
+lcd::Color Component::getDisableBackground() 
+{
+    if(disableBackground == lcd::TRANSPARENT)
+        return (parent == nullptr) ? lcd::BLACK : parent->getDisableBackground();
+    return disableBackground;
+}
+
+lcd::Color Component::getCurrentForeground() 
+{
+    return (enable) ? getForeground() : getDisableForeground();
+}
+
+lcd::Color Component::getCurrentBackground() 
+{
+    return (enable) ? getBackground() : getDisableBackground();
 }
 
 bool Component::contains(uint16_t x, uint16_t y, uint16_t hitboxOffset = 0)

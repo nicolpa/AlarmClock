@@ -57,7 +57,9 @@ public:
      * @param y The y position of the click in the screen coordinates
      * @return Whether or not the component is clicked
      */
-    virtual bool onClick(uint16_t x, uint16_t y);
+    virtual Component *onClick(uint16_t x, uint16_t y);
+
+    virtual void onRelease(uint16_t x, uint16_t y);
 
     /**
      * Test whether or not this component can be shown on the screen
@@ -223,8 +225,12 @@ public:
     virtual void validate();
     virtual void invalidate();
 
-    void print();
-
+    lcd::Color getForeground();
+    lcd::Color getBackground();
+    lcd::Color getDisableForeground();
+    lcd::Color getDisableBackground();
+    lcd::Color getCurrentForeground();
+    lcd::Color getCurrentBackground();
 
 protected:
     lcd::UTFT *LCD;

@@ -68,7 +68,7 @@ public:
      */
     void draw() override;
 
-    virtual bool onClick(uint16_t x, uint16_t y);
+    Component *onClick(uint16_t x, uint16_t y) override;
 
     void updateLayout() override;
 

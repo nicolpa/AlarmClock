@@ -24,7 +24,7 @@ public:
     ~VirtualKeyboard();
 
     void draw() override;
-    bool onClick(uint16_t x, uint16_t y) override;
+    Component *onClick(uint16_t x, uint16_t y) override;
 
 
     void subscribeComponent(TextArea *component);

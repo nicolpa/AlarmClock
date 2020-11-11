@@ -5,6 +5,12 @@ Line::Line(lcd::UTFT *LCD, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2)
 {
 }
 
+Line::Line(lcd::UTFT *LCD, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, lcd::Color color) 
+    : GraphicalComponent(LCD, x1, y1, x2 - x1, y2 - y1)
+{
+    this->foreground = color;
+}
+
 Line::~Line()
 {
 }

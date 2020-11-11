@@ -1,21 +1,21 @@
 #include "RadioButtonHolder.hpp"
 
-RadioButtonHolder::RadioButtonHolder(lcd::UTFT *LCD, uint16_t x, uint16_t y, uint16_t width, uint16_t height, word borderColor)
+RadioButtonHolder::RadioButtonHolder(lcd::UTFT *LCD, uint16_t x, uint16_t y, uint16_t width, uint16_t height, lcd::Color borderColor)
     : ToggleButtonHolder(LCD, x, y, width, height, borderColor)
 {
 }
 
-RadioButtonHolder::RadioButtonHolder(lcd::UTFT *LCD, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height, word borderColor)
+RadioButtonHolder::RadioButtonHolder(lcd::UTFT *LCD, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height, lcd::Color borderColor)
     : ToggleButtonHolder(LCD, horizontalAlignment, verticalAlignment, width, height, borderColor)
 {
 }
 
-RadioButtonHolder::RadioButtonHolder(lcd::UTFT *LCD, uint16_t x, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height, word borderColor)
+RadioButtonHolder::RadioButtonHolder(lcd::UTFT *LCD, uint16_t x, VerticalAlignment verticalAlignment, uint16_t width, uint16_t height, lcd::Color borderColor)
     : ToggleButtonHolder(LCD, x, verticalAlignment, width, height, borderColor)
 {
 }
 
-RadioButtonHolder::RadioButtonHolder(lcd::UTFT *LCD, HorizontalAlignment horizontalAlignment, uint16_t y, uint16_t width, uint16_t height, word borderColor)
+RadioButtonHolder::RadioButtonHolder(lcd::UTFT *LCD, HorizontalAlignment horizontalAlignment, uint16_t y, uint16_t width, uint16_t height, lcd::Color borderColor)
     : ToggleButtonHolder(LCD, horizontalAlignment, y, width, height, borderColor)
 {
 }
@@ -24,7 +24,7 @@ RadioButtonHolder::~RadioButtonHolder()
 {
 }
 
-bool RadioButtonHolder::onClick(uint16_t x, uint16_t y)
+Component *RadioButtonHolder::onClick(uint16_t x, uint16_t y)
 {
     for (int i = 0; i < components->size(); i++)
     {
@@ -38,13 +38,13 @@ bool RadioButtonHolder::onClick(uint16_t x, uint16_t y)
                     {
                         ((RadioButton *)(getComponent(j)))->setChecked(false);
                         ((RadioButton *)(getComponent(j)))->draw();
-                        return true;
+                        return this;
                     }
                 }
             }
-            return true;
+            return this;
         }
     }
 
-    return false;
+    return nullptr;
 }

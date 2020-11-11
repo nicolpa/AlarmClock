@@ -111,11 +111,14 @@ void Container::draw()
     valid = true;
 }
 
-bool Container::onClick(uint16_t x, uint16_t y)
+Component *Container::onClick(uint16_t x, uint16_t y)
 {
     for (int i = 0; i < components->size(); i++)
-        if (components->get(i)->onClick(x, y))
-            return true;
+    {
+        Component *clickedUpon = components->get(i)->onClick(x, y);
+        if (clickedUpon)
+            return clickedUpon;
+    }
 
     return Component::onClick(x, y);
 }

@@ -1,7 +1,7 @@
 #include "Slider.hpp"
 
 Slider::Slider(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint16_t length, Orientation orientation)
-    : Component(LCD, Touch, x, y, 0, 0), fillColor(fillColor), orientation(orientation)
+    : Component(LCD, Touch, x, y, 0, 0), fillColor(lcd::BLUE), orientation(orientation)
 {
     clickable = true;
 
@@ -32,18 +32,31 @@ void Slider::draw()
 
     if (orientation == Orientation::HORIZONTAL)
     {
+
         int screenSpaceValue = map(value, minimum, maximum, getX(), getX() + width);
+        int screenSpacePreviousValue = map(previousValue, minimum, maximum, getX(), getX() + width);
 
-        LCD->setColor(fillColor);
-        LCD->fillRect(getX(), getY(), screenSpaceValue - 2, getY() + height);
-        LCD->setColor(foreground);
-        LCD->drawRect(getX(), getY(), screenSpaceValue - 2, getY() + height);
+        //Clear thumb
+        LCD->setColor(getCurrentBackground());
+        LCD->fillRect(screenSpacePreviousValue - 2, getY() - 2, screenSpacePreviousValue + 2, getY() + height + 4);
 
-        LCD->setColor(background);
-        LCD->fillRect(screenSpaceValue + 3, getY() + 1, getX() + width - 1, getY() + height - 1);
-        LCD->setColor(foreground);
-        LCD->drawRect(screenSpaceValue + 2, getY(), getX() + width, getY() + height);
+        //Fill slider
+        if (screenSpaceValue < screenSpacePreviousValue)
+        {
+            LCD->setColor(getCurrentBackground());
+            LCD->fillRect(screenSpacePreviousValue + 2, getY() + 1, screenSpaceValue, getY() + height - 1);
+        }
+        else if (screenSpaceValue > screenSpacePreviousValue)
+        {
+            LCD->setColor(fillColor);
+            LCD->fillRect(screenSpacePreviousValue, getY() + 1, screenSpaceValue - 2, getY() + height - 1);
+        }
 
+        //Draw frame
+        LCD->setColor(getCurrentForeground());
+        LCD->drawRect(getX(), getY(), getX() + width, getY() + height);
+
+        LCD->setColor(lcd::WHITE);
         if (showTicks)
         {
             if (ticksValues == nullptr)
@@ -54,11 +67,13 @@ void Slider::draw()
                     LCD->drawVLine(map(ticksValues[i], minimum, maximum, getX(), getX() + width), getY() - 1, height + 2);
         }
 
+        //draw thumb
         LCD->fillRect(screenSpaceValue - 2, getY() - 2, screenSpaceValue + 2, getY() + height + 4);
     }
     else
     {
         int screenSpaceValue = map(value, minimum, maximum, getY(), getY() + height);
+        int screenSpacePreviousValue = map(previousValue, minimum, maximum, getY(), getY() + height);
 
         LCD->setColor(fillColor);
         LCD->fillRect(getX(), getY(), getX() + width, screenSpaceValue - 2);
@@ -86,64 +101,73 @@ void Slider::draw()
     valid = true;
 }
 
-bool Slider::onClick(uint16_t x, uint16_t y)
+Component *Slider::onClick(uint16_t x, uint16_t y)
 {
 
-    if (contains(x, y, HIT_BOX_OFFSET))
+    if (contains(x, y, HIT_BOX_OFFSET) || focus)
     {
-        // Touch->saveStartPressTime();
-        while (Touch->dataAvailable())
+        static int prevX = 0;
+        static int prevY = 0;
+        if (!focus)
         {
-            Touch->read();
-            int oldValue = value;
+            focus = true;
+            Touch->saveStartPressTime();
+        }
 
-            if (orientation == Orientation::HORIZONTAL)
+        if (orientation == Orientation::HORIZONTAL)
+        {
+            if (abs(prevX - x) > 4)
             {
-                if (abs(x - Touch->getX()) > 4)
+                prevX = x;
+                if (x < getX())
+                    x = getX();
+                if (x > getX() + width)
+                    x = getX() + width;
+
+                setValue(map(x, getX(), getX() + width, minimum, maximum));
+
+                if (previousValue != value)
                 {
-                    x = Touch->getX();
-                    if (x < getX())
-                        x = getX();
-                    if (x > getX() + width)
-                        x = getX() + width;
-
-                    setValue(map(x, getX(), getX() + width, minimum, maximum));
-
-                    if (oldValue != value)
-                    {
-                        int screenSpaceValue = map(oldValue, minimum, maximum, getX(), getX() + width);
-                        LCD->setColor(background);
-                        LCD->fillRect(screenSpaceValue - 2, getY() - 2, screenSpaceValue + 2, getY() + height + 4);
-                        draw();
-                    }
-                }
-            }
-            else
-            {
-                if (abs(y - Touch->getY()) > 4)
-                {
-                    y = Touch->getY();
-                    if (y < getY())
-                        y = getY();
-                    if (y > getY() + height)
-                        y = getY() + height;
-
-                    setValue(map(y, getY(), getY() + height, minimum, maximum));
-
-                    if (oldValue != value)
-                    {
-                        int screenSpaceValue = map(oldValue, minimum, maximum, getY(), getY() + height);
-                        LCD->setColor(background);
-                        LCD->fillRect(getX() - 2, screenSpaceValue - 2, getX() + width + 4, screenSpaceValue + 2);
-                        draw();
-                    }
+                    setValue(value);
+                    draw();
+                    previousValue = value;
                 }
             }
         }
-        return true;
+        else
+        {
+            if (abs(prevY - y) > 4)
+            {
+                prevY = y;
+                if (y < getY())
+                    y = getY();
+                if (y > getY() + height)
+                    y = getY() + height;
+
+                setValue(map(y, getY(), getY() + height, minimum, maximum));
+
+                if (previousValue != value)
+                {
+                    setValue(value);
+                    draw();
+                    previousValue = value;
+                }
+            }
+        }
+        return this;
     }
 
-    return false;
+    return nullptr;
+}
+
+void Slider::onRelease(uint16_t x, uint16_t y)
+{
+    if (!Touch->dataAvailable())
+    {
+        Component::onRelease(x, y);
+
+        // focus =  false;
+    }
 }
 
 int Slider::getMinimum()
@@ -179,11 +203,13 @@ bool Slider::getShowTicksValues()
 void Slider::setMinimum(int min)
 {
     minimum = min;
+    valid = false;
 }
 
 void Slider::setMaximum(int max)
 {
     maximum = max;
+    valid = false;
 }
 
 void Slider::setValue(int value)
@@ -194,6 +220,8 @@ void Slider::setValue(int value)
         this->value = maximum;
     else if (this->value < minimum)
         this->value = minimum;
+
+    valid = false;
 }
 
 void Slider::setTickSpacing(uint16_t spacing)
@@ -222,6 +250,7 @@ void Slider::setTickSpacing(uint16_t spacing)
 void Slider::setShowTicks(bool display)
 {
     showTicks = display;
+    valid = false;
 }
 
 void Slider::setSnapToTicks(bool snap)
@@ -234,6 +263,7 @@ void Slider::setSnapToTicks(bool snap)
 void Slider::setOrientation(Orientation orientation)
 {
     this->orientation = orientation;
+    valid = false;
 }
 
 void Slider::increaseValueBy(int amount)

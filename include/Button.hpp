@@ -43,13 +43,19 @@ public:
 
     void draw() override;
 
-    bool onClick(uint16_t x, uint16_t y) override;
+    Component *onClick(uint16_t x, uint16_t y) override;
+
+    void onRelease(uint16_t x, uint16_t y) override;
 
     void setGraphics(GraphicalComponent *graphics);
 
     void setContentHighlight(bool contentHighlight);
 
     void setBorderHighlight(bool borderHighlight);
+
+    void setContentVerticalAlignment(VerticalAlignment contentVerticalAlignment);
+
+    void setContentHorizontalAligment(HorizontalAlignment contentHorizontalAlignment);
 
 private:
     /**
@@ -70,4 +76,8 @@ private:
     bool borderHighlight = true;
 
     GraphicalComponent *graphics = nullptr;
+
+    VerticalAlignment contentVerticalAlignment = VerticalAlignment::Center;
+    
+    HorizontalAlignment contentHorizontalAlignment = HorizontalAlignment::Center;
 };
