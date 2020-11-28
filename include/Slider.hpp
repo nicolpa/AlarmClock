@@ -107,6 +107,8 @@ public:
      */
     void increaseValueBy(int amount);
 
+    void clear() override;
+
 private:
     lcd::Color fillColor;
 

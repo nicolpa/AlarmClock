@@ -91,7 +91,7 @@ void cycleBrightness()
         break;
     }
 
-    LCD.setBrightness(map(level, 0, 100, 0, 255), true);
+    // LCD.setBrightness(map(level, 0, 100, 0, 255), true);
 }
 
 void loadMainFrame()
@@ -276,6 +276,7 @@ void setup()
 
     LCD.fade(true);
     LCD.InitLCD();
+    // LCD.setBrightness(255, true);
 
     Touch.InitTouch();
     Touch.setPrecision(PREC_MEDIUM);
@@ -299,20 +300,6 @@ void setup()
     loadSettingsFrame();
 
     currentFrame = frmMain;
-
-    Slider *sl = new Slider(&LCD, &Touch, 10, frmMain->getHeight() - 20, 100);
-    sl->setTickSpacing(10);
-    sl->setShowTicks(true);
-    sl->setSnapToTicks(true);
-    sl->setValue(50);
-    frmMain->add(sl);
-
-    Slider *sl2 = new Slider(&LCD, &Touch, 10, frmMain->getHeight() - 150, 100, Orientation::VERTICAL);
-    sl2->setTickSpacing(10);
-    sl2->setShowTicks(true);
-    sl2->setSnapToTicks(true);
-    sl2->setValue(50);
-    frmMain->add(sl2);
 }
 
 void loop()
