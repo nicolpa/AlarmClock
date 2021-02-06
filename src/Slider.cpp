@@ -30,65 +30,65 @@ void Slider::draw()
 
     if (orientation == Orientation::HORIZONTAL)
     {
-        int screenSpaceValue = map(value, minimum, maximum, getX(), getX() + width);
-        int screenSpacePreviousValue = map(previousValue, minimum, maximum, getX(), getX() + width);
+        int screenSpaceValue = map(value, minimum, maximum, getX(), getX() + getWidth());
+        int screenSpacePreviousValue = map(previousValue, minimum, maximum, getX(), getX() + getWidth());
 
         //Clear thumb
         LCD->setColor(getCurrentBackground());
-        LCD->fillRect(screenSpacePreviousValue - 2, getY() - 2, screenSpacePreviousValue + 2, getY() + height + 4);
+        LCD->fillRect(screenSpacePreviousValue - 2, getY() - 2, screenSpacePreviousValue + 2, getY() + getHeight() + 4);
 
         //Fill slider
         LCD->setColor((screenSpaceValue < screenSpacePreviousValue) ? getCurrentBackground() : fillColor);
-        LCD->fillRect(screenSpacePreviousValue, getY() + 1, screenSpaceValue, getY() + height - 1);
+        LCD->fillRect(screenSpacePreviousValue, getY() + 1, screenSpaceValue, getY() + getHeight() - 1);
 
         //Draw frame
         LCD->setColor(getCurrentForeground());
-        LCD->drawRect(getX(), getY(), getX() + width, getY() + height);
+        LCD->drawRect(getX(), getY(), getX() + getWidth(), getY() + getHeight());
 
         LCD->setColor(lcd::WHITE);
         if (showTicks)
         {
             if (ticksValues == nullptr)
                 for (int i = minimum; i <= maximum; i++)
-                    LCD->drawVLine(map(i, minimum, maximum, getX(), getX() + width), getY() - 1, height + 2);
+                    LCD->drawVLine(map(i, minimum, maximum, getX(), getX() + getWidth()), getY() - 1, getHeight() + 2);
             else
                 for (int i = 0; i < nTicks; i++)
-                    LCD->drawVLine(map(ticksValues[i], minimum, maximum, getX(), getX() + width), getY() - 1, height + 2);
+                    LCD->drawVLine(map(ticksValues[i], minimum, maximum, getX(), getX() + getWidth()), getY() - 1, getHeight() + 2);
         }
 
         //draw thumb
-        LCD->fillRect(screenSpaceValue - 2, getY() - 2, screenSpaceValue + 2, getY() + height + 3);
+        LCD->fillRect(screenSpaceValue - 2, getY() - 2, screenSpaceValue + 2, getY() + getHeight() + 3);
     }
     else
     {
-        int screenSpaceValue = map(value, minimum, maximum, getY(), getY() + height);
-        int screenSpacePreviousValue = map(previousValue, minimum, maximum, getY(), getY() + height);
+        int screenSpaceValue = map(value, minimum, maximum, getY(), getY() + getHeight());
+        int screenSpacePreviousValue = map(previousValue, minimum, maximum, getY(), getY() + getHeight());
 
         //Clear thumb
         LCD->setColor(getCurrentBackground());
-        LCD->fillRect(getX() - 2, screenSpacePreviousValue - 2, getX() + width + 4, screenSpacePreviousValue + 2);
+        LCD->fillRect(getX() - 2, screenSpacePreviousValue - 2, getX() + getWidth() + 4, screenSpacePreviousValue + 2);
 
         //Fill slider
         LCD->setColor((screenSpaceValue < screenSpacePreviousValue) ? getCurrentBackground() : fillColor);
-        LCD->fillRect(getX() + 1, screenSpacePreviousValue, getX() + width - 1, screenSpaceValue);
+        LCD->fillRect(getX() + 1, screenSpacePreviousValue, getX() + getWidth() - 1, screenSpaceValue);
 
         //Draw frame
         LCD->setColor(getCurrentForeground());
-        LCD->drawRect(getX(), getY(), getX() + width, getY() + height);
+        LCD->drawRect(getX(), getY(), getX() + getWidth(), getY() + getHeight());
 
         LCD->setColor(lcd::WHITE);
         if (showTicks)
         {
             if (ticksValues == nullptr)
                 for (int i = minimum; i <= maximum; i++)
-                    LCD->drawHLine(getX() - 1, map(i, minimum, maximum, getY(), getY() + height), width + 2);
+                    LCD->drawHLine(getX() - 1, map(i, minimum, maximum, getY(), getY() + getHeight()), getWidth() + 2);
             else
                 for (int i = 0; i < nTicks; i++)
-                    LCD->drawHLine(getX() - 1, map(ticksValues[i], minimum, maximum, getY(), getY() + height), width + 2);
+                    LCD->drawHLine(getX() - 1, map(ticksValues[i], minimum, maximum, getY(), getY() + getHeight()), getWidth() + 2);
         }
 
         //draw thumb
-        LCD->fillRect(getX() - 2, screenSpaceValue - 2, getX() + width + 3, screenSpaceValue + 2);
+        LCD->fillRect(getX() - 2, screenSpaceValue - 2, getX() + getWidth() + 3, screenSpaceValue + 2);
     }
 
     valid = true;
@@ -113,10 +113,10 @@ Component *Slider::onClick(uint16_t x, uint16_t y)
                 prevX = x;
                 if (x < getX())
                     x = getX();
-                if (x > getX() + width)
-                    x = getX() + width;
+                if (x > getX() + getWidth())
+                    x = getX() + getWidth();
 
-                setValue(map(x, getX(), getX() + width, minimum, maximum));
+                setValue(map(x, getX(), getX() + getWidth(), minimum, maximum));
                 draw();
             }
         }
@@ -127,10 +127,10 @@ Component *Slider::onClick(uint16_t x, uint16_t y)
                 prevY = y;
                 if (y < getY())
                     y = getY();
-                if (y > getY() + height)
-                    y = getY() + height;
+                if (y > getY() + getHeight())
+                    y = getY() + getHeight();
 
-                setValue(map(y, getY(), getY() + height, minimum, maximum));
+                setValue(map(y, getY(), getY() + getHeight(), minimum, maximum));
                 draw();
             }
         }

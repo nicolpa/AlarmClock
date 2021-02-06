@@ -7,6 +7,12 @@ Frame::Frame(lcd::UTFT *LCD, lcd::Color background)
     transparent = true;
 }
 
+Frame::Frame(lcd::UTFT *LCD, URTouch *Touch, lcd::Color background) 
+    : Frame(LCD, background)
+{
+    this->Touch = Touch;
+}
+
 Frame::~Frame()
 {
 }

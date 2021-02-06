@@ -18,7 +18,7 @@ Line::~Line()
 void Line::clear() 
 {
     LCD->setColor(VGA_BLACK);
-    LCD->drawLine(getX(), getY(), getX() + width, getY() + height);
+    LCD->drawLine(getX(), getY(), getX() + getWidth(), getY() + getHeight());
 
     invalidate();
 }
@@ -29,7 +29,7 @@ void Line::draw()
         return;
 
     LCD->setColor((enable) ? foreground : disableForeground);
-    LCD->drawLine(getX(), getY(), getX() + width, getY() + height);
+    LCD->drawLine(getX(), getY(), getX() + getWidth(), getY() + getHeight());
 
     valid = true;
 }

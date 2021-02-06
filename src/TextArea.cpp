@@ -9,7 +9,7 @@ TextArea::TextArea(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint1
     this->Touch = Touch;
     this->font = font;
     LCD->setFont(font);
-    maxLength = (width - 10) / LCD->getFontXsize();
+    maxLength = (getWidth() - 10) / LCD->getFontXsize();
     height = LCD->getFontYsize() + 10;
     keyboard = new VirtualKeyboard(LCD, Touch);
     keyboard->subscribeComponent(this);
@@ -21,7 +21,7 @@ TextArea::TextArea(lcd::UTFT *LCD, URTouch *Touch, uint16_t x, uint16_t y, uint1
     this->Touch = Touch;
     this->font = font;
     LCD->setFont(font);
-    maxLength = width / LCD->getFontXsize();
+    maxLength = getWidth() / LCD->getFontXsize();
     height = LCD->getFontYsize() + 10;
     keyboard = new VirtualKeyboard(LCD, Touch);
     keyboard->subscribeComponent(this);
@@ -32,9 +32,9 @@ void TextArea::draw()
     if (valid || !visible)
         return;
     LCD->setColor(VGA_BLACK);
-    LCD->fillRect(getX() + 1, getY() + 1, getX() + width - 1, getY() + height - 1);
+    LCD->fillRect(getX() + 1, getY() + 1, getX() + getWidth() - 1, getY() + getHeight() - 1);
     LCD->setColor(foreground);
-    LCD->drawRect(getX(), getY(), getX() + width, getY() + height);
+    LCD->drawRect(getX(), getY(), getX() + getWidth(), getY() + getHeight());
 
     LCD->setFont(font);
     LCD->print(text, getX() + 5, getY() + 5);

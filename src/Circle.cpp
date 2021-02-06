@@ -16,9 +16,9 @@ void Circle::draw()
     
     LCD->setColor((enable) ? foreground : disableForeground);
     if (fill)
-        LCD->fillCircle(getX(), getY(), width);
+        LCD->fillCircle(getX(), getY(), getWidth());
     else
-        LCD->drawCircle(getX(), getY(), width);
+        LCD->drawCircle(getX(), getY(), getWidth());
 
     valid = true;
 }

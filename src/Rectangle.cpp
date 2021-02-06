@@ -19,9 +19,9 @@ void Rectangle::clear()
 {
     LCD->setColor(VGA_BLACK);
     if (fill)
-        LCD->fillRect(getX(), getY(), getX() + width, getY() + height);
+        LCD->fillRect(getX(), getY(), getX() + getWidth(), getY() + getHeight());
     else
-        LCD->drawRect(getX(), getY(), getX() + width, getY() + height);
+        LCD->drawRect(getX(), getY(), getX() + getWidth(), getY() + getHeight());
 
     invalidate();
 }
@@ -33,9 +33,9 @@ void Rectangle::draw()
 
     LCD->setColor((enable) ? foreground : disableForeground);
     if (fill)
-        LCD->fillRect(getX(), getY(), getX() + width, getY() + height);
+        LCD->fillRect(getX(), getY(), getX() + getWidth(), getY() + getHeight());
     else
-        LCD->drawRect(getX(), getY(), getX() + width, getY() + height);
+        LCD->drawRect(getX(), getY(), getX() + getWidth(), getY() + getHeight());
 
     valid = true;
 }

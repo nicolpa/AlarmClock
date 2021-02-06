@@ -27,7 +27,7 @@ Panel::~Panel()
 void Panel::clear() 
 {
     LCD->setColor(VGA_BLACK);
-    LCD->fillRect(getX(), getY(), getX() + width, getY() + height);
+    LCD->fillRect(getX(), getY(), getX() + getWidth(), getY() + getHeight());
     Container::clear();
 }
 

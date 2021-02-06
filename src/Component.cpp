@@ -57,7 +57,7 @@ Component::~Component()
 void Component::clear()
 {
     LCD->setColor(VGA_BLACK);
-    LCD->fillRect(getX(), getY(), getX() + width, getY() + height);
+    LCD->fillRect(getX(), getY(), getX() + getWidth(), getY() + getHeight());
     invalidate();
 }
 
@@ -121,22 +121,22 @@ Component *Component::getParent()
 
 uint16_t Component::getX(bool useScreenSpace)
 {
-    return (parent != nullptr && useScreenSpace) ? x + parent->getX() : x;
+    return (parent != nullptr && useScreenSpace) ? x + parent->getX() + marginLeft : x + marginLeft;
 }
 
 uint16_t Component::getY(bool useScreenSpace)
 {
-    return (parent != nullptr && useScreenSpace) ? y + parent->getY() : y;
+    return (parent != nullptr && useScreenSpace) ? y + parent->getY() + marginTop : y + marginTop;
 }
 
 uint16_t Component::getWidth()
 {
-    return width;
+    return width - marginLeft - marginRight;
 }
 
 uint16_t Component::getHeight()
 {
-    return height;
+    return height - marginBottom - marginTop;
 }
 
 uint8_t *Component::getFont()
@@ -233,6 +233,16 @@ void Component::setBounds(uint16_t x, uint16_t y, uint16_t width, uint16_t heigh
     updateLayout();
 }
 
+void Component::setMargin(uint16_t top, uint16_t right, uint16_t bottom, uint16_t left) 
+{
+    marginTop = top;
+    marginRight = right;
+    marginBottom = bottom;
+    marginLeft = left;
+
+    updateLayout();
+}
+
 void Component::setFont(uint8_t *font)
 {
     this->font = font;
@@ -292,10 +302,10 @@ void Component::updateLayout()
         this->x = 0;
         break;
     case HorizontalAlignment::Right:
-        this->x = (parent == nullptr) ? LCD->getDisplayXSize() - width - 1 : parent->getWidth() - width - 1;
+        this->x = (parent == nullptr) ? LCD->getDisplayXSize() - getWidth() - 1 : parent->getWidth() - getWidth() - 1;
         break;
     case HorizontalAlignment::Center:
-        this->x = (parent == nullptr) ? (LCD->getDisplayXSize() - width) / 2 : ((parent->getWidth() - width) / 2);
+        this->x = (parent == nullptr) ? (LCD->getDisplayXSize() - getWidth()) / 2 : ((parent->getWidth() - getWidth()) / 2);
         break;
     case HorizontalAlignment::None:
     default:
@@ -308,10 +318,10 @@ void Component::updateLayout()
         this->y = 0;
         break;
     case VerticalAlignment::Down:
-        this->y = (parent == nullptr) ? LCD->getDisplayYSize() - height : parent->getHeight() - height - 1;
+        this->y = (parent == nullptr) ? LCD->getDisplayYSize() - getHeight() : parent->getHeight() - getHeight() - 1;
         break;
     case VerticalAlignment::Center:
-        this->y = (parent == nullptr) ? (LCD->getDisplayYSize() - height) / 2 : ((parent->getHeight() - height) / 2);
+        this->y = (parent == nullptr) ? (LCD->getDisplayYSize() - getHeight()) / 2 : ((parent->getHeight() - getHeight()) / 2);
         break;
     case VerticalAlignment::None:
     default:
@@ -322,9 +332,9 @@ void Component::updateLayout()
         this->x = LCD->getDisplayXSize() - 1;
     if (getY() >= LCD->getDisplayYSize())
         this->y = LCD->getDisplayYSize() - 1;
-    if (getX() + width >= LCD->getDisplayXSize())
+    if (getX() + getWidth() >= LCD->getDisplayXSize())
         this->width = LCD->getDisplayXSize() - getX() - 1;
-    if (getY() + height >= LCD->getDisplayYSize())
+    if (getY() + getHeight() >= LCD->getDisplayYSize())
         this->height = LCD->getDisplayYSize() - getY() - 1;
 
     invalidate();
@@ -411,7 +421,10 @@ lcd::Color Component::getCurrentBackground()
     return (enable) ? getBackground() : getDisableBackground();
 }
 
-bool Component::contains(uint16_t x, uint16_t y, uint16_t hitboxOffset = 0)
+bool Component::contains(uint16_t x, uint16_t y, uint16_t hitboxOffset)
 {
-    return x >= (getX() - hitboxOffset) && y >= (getY() - hitboxOffset) && x < (getX() + width + hitboxOffset) && y < (getY() + height + hitboxOffset);
+    if(hitboxOffset == 0 && focus)
+        hitboxOffset += ((getHeight() + getWidth()) / 2) * 0.25;
+    
+    return x >= (getX() - hitboxOffset) && y >= (getY() - hitboxOffset) && x < (getX() + getWidth() + hitboxOffset) && y < (getY() + getHeight() + hitboxOffset);
 }

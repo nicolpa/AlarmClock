@@ -110,16 +110,22 @@ void Button::draw()
 
     if (!borderless)
     {
-        LCD->setColor(background);
-        LCD->fillRect(getX() + 1, getY() + 1, getX() + width - 1, getY() + height - 1);
+        if(background != lcd::TRANSPARENT)
+        {
+            LCD->setColor(background);
+            LCD->fillRect(getX() + 1, getY() + 1, getX() + getWidth() - 1, getY() + getHeight() - 1);
+        }
 
         LCD->setColor((pressed && borderHighlight) ? pressedColor : foreground);
-        LCD->drawRect(getX(), getY(), getX() + width, getY() + height);
+        LCD->drawRect(getX(), getY(), getX() + getWidth(), getY() + getHeight());
     }
     else
     {
-        LCD->setColor((enable) ? background : disableBackground);
-        LCD->fillRect(getX(), getY(), getX() + width, getY() + height);
+        if(background != lcd::TRANSPARENT)
+        {
+            LCD->setColor((enable) ? background : disableBackground);
+            LCD->fillRect(getX(), getY(), getX() + getWidth(), getY() + getHeight());
+        }
     }
 
     if (contentHighlight && pressed)
@@ -144,7 +150,7 @@ void Button::draw()
         switch (contentVerticalAlignment)
         {
         case VerticalAlignment::Down:
-            y = getY() + height - LCD->getFontYsize() - 1;
+            y = getY() + getHeight() - LCD->getFontYsize() - 1;
             break;
         case VerticalAlignment::Up:
             y = getY() - 1;
@@ -152,7 +158,7 @@ void Button::draw()
         case VerticalAlignment::Center:
         case VerticalAlignment::None:
         default:
-            y = ceil(getY() + (height / 2.0f) - LCD->getFontYsize() / 2.0f);
+            y = ceil(getY() + (getHeight() / 2.0f) - LCD->getFontYsize() / 2.0f);
             break;
         }
 
@@ -163,14 +169,14 @@ void Button::draw()
             // Serial.println("left");
             break;
         case HorizontalAlignment::Right:
-            x = getX() + width - (text.length() * LCD->getFontXsize()) - 1;
+            x = getX() + getWidth() - (text.length() * LCD->getFontXsize()) - 1;
             // Serial.println("right");
             break;
         case HorizontalAlignment::Center:
         case HorizontalAlignment::None:
         default:
             // Serial.println("Center");
-            x = ceil(getX() + (width / 2.0f) - (text.length() * LCD->getFontXsize()) / 2.0f);
+            x = ceil(getX() + (getWidth() / 2.0f) - (text.length() * LCD->getFontXsize()) / 2.0f);
             break;
         }
 

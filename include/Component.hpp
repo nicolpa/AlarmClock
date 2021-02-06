@@ -193,6 +193,8 @@ public:
      */
     void setBounds(uint16_t x, uint16_t y, uint16_t width, uint16_t height);
 
+    void setMargin(uint16_t top, uint16_t right, uint16_t bottom, uint16_t left);
+
     /**
      * Set the font for this component
      * @param font The new font for this component
@@ -272,6 +274,14 @@ protected:
      * The component height
      */
     uint16_t height = 0;
+
+    uint16_t marginLeft = 0;
+
+    uint16_t marginRight = 0;
+
+    uint16_t marginTop = 0;
+
+    uint16_t marginBottom = 0;
 
     /**
      * The foreground color of the component
